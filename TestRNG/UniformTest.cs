@@ -18,6 +18,7 @@ using System;
 using System.ComponentModel;
 using System.IO;
 using System.Text;
+using TestRNG.Statistics;
 
 namespace TestRNG;
 
@@ -28,8 +29,11 @@ public static class UniformTest
    /// </summary>
    /// <param name="binCount">The number of bins into which the random numbers are divided.</param>
    /// <param name="callCount">The number of times to call the random number generator.</param>
-   /// <param name="outputFileName">The name of the output file in which to store results.</param>
-   public static void Test(int binCount, int callCount, string outputFileName)
+   /// <param name="sigLevel">The significance level to use.</param>
+   /// <param name="outputFileName">The name of the output file in which to store the raw results.  
+   /// These results include only  the bin counts (observed) and the expected values.  If null, no 
+   /// output file is created.</param>
+   public static void Test(int binCount, int callCount, double sigLevel, string? outputFileName)
    {
       int[] bins = new int[binCount];
 
@@ -40,12 +44,33 @@ public static class UniformTest
          bins[value]++;
       }
 
+      // Calculate the Chi Squared Test Statistic.
       double expected = (double)callCount / binCount;
-      using (StreamWriter sw = new(outputFileName, false, Encoding.UTF8))
-      {
-         sw.WriteLine("Bin;Observed;Expected");
-         for (int j = 0; j < binCount; j++)
-            sw.WriteLine($"{j:N0};{bins[j]:N0};{expected:0.##}");
-      }
+      double testStat = 0;
+      for (int j = 0; j < binCount; j++)
+         testStat += (expected - bins[j]) * (expected - bins[j]) / expected;
+
+      // Convert the test statistic to a probability
+      double p = ChiSquare.ChiProb(testStat, binCount - 1);
+
+      // Output the results
+      Console.WriteLine("Null Hypothesis:  The RNG produces a uniform distribution.");
+      Console.WriteLine("Alternate Hypothesis:  The RNG is non-uniform.");
+      Console.WriteLine($"Significance Level:  {sigLevel:P}");
+      Console.WriteLine($"Test Statistic:  {testStat:#,##0.000}");
+      Console.WriteLine($"p-value: {p:P4}");
+      if (p > sigLevel)
+         Console.WriteLine("p-Value is greater than significance level: ACCEPT Null Hypothesis.");
+      else
+         Console.WriteLine("p-Value is less than or equal to the significance level: REJECT Null Hypothesis.");
+
+         // Optionally, output the bin counts to a file.
+      if (!string.IsNullOrEmpty(outputFileName))
+         using (StreamWriter sw = new(outputFileName, false, Encoding.UTF8))
+         {
+            sw.WriteLine("Bin;Observed;Expected");
+            for (int j = 0; j < binCount; j++)
+               sw.WriteLine($"{j:N0};{bins[j]:N0};{expected:0.##}");
+         }
    }
 }

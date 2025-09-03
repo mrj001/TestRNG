@@ -23,6 +23,6 @@ public class Program
    public static void Main(string[] args)
    {
       Console.WriteLine("Conducting Uniform Test");
-      UniformTest.Test(250, 100_000_000, "results.csv");
+      UniformTest.Test(250, 100_000_000, 0.05, null);
    }
 }
