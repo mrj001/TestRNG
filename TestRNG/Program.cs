@@ -22,7 +22,33 @@ public class Program
 {
    public static void Main(string[] args)
    {
-      Console.WriteLine("Conducting Uniform Test");
-      UniformTest.Test(250, 100_000_000, 0.05, null);
+      CommandLineArgs? clArgs = CommandLineArgs.ParseCommandLineArgs(args, Console.Error);
+      if (clArgs is null)
+         return;
+
+      switch (clArgs.SelectedTest)
+      {
+         case TestSelector.Uniform:
+            DoUniformTest(clArgs);
+            break;
+
+         default:
+            break;
+      }
+   }
+
+   private static void DoUniformTest(CommandLineArgs args)
+   {
+      Console.WriteLine("Running Uniform test");
+      if (!string.IsNullOrEmpty(args.OutputFileName))
+         Console.WriteLine($"Output file: {args.OutputFileName}");
+      else
+         Console.WriteLine("No output file selected.");
+
+      Console.WriteLine($"Bin Count: {args.BinCount:N0}");
+      Console.WriteLine($"Call Count: {args.CallCount:N0}");
+      Console.WriteLine($"Significance: {args.Significance}");
+
+      UniformTest.Test(args.BinCount, args.CallCount, args.Significance, args.OutputFileName);
    }
 }
