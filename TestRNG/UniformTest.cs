@@ -70,7 +70,7 @@ public static class UniformTest
          {
             sw.WriteLine("Bin;Observed;Expected");
             for (int j = 0; j < binCount; j++)
-               sw.WriteLine($"{j:N0};{bins[j]:N0};{expected:0.##}");
+               sw.WriteLine($"{j:N0};{bins[j]:N0};{expected:#,##0.##}");
          }
    }
 }
