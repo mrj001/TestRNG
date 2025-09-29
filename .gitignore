@@ -14,6 +14,9 @@
 *.sln.docstates
 WorkingFiles/
 
+# Locally cached copyrighted References
+References/Cache/
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
