@@ -180,15 +180,15 @@ public class CommandLineArgs
       tw.WriteLine("\tuniform");
       tw.WriteLine();
       tw.WriteLine($"Uniform test arguments:");
-      tw.WriteLine("   [{BIN_COUNT_SHORT} | {BIN_COUNT_LONG} BinCount]");
+      tw.WriteLine($"   [{BIN_COUNT_SHORT} | {BIN_COUNT_LONG} BinCount]");
       tw.WriteLine("      BinCount must be at least 2.");
       tw.WriteLine($"      If not specified, defaults to {DEFAULT_BIN_COUNT:N0}");
       tw.WriteLine();
-      tw.WriteLine("   [{CALL_COUNT_SHORT} | {CALL_COUNT_LONG} CallCount]");
+      tw.WriteLine($"   [{CALL_COUNT_SHORT} | {CALL_COUNT_LONG} CallCount]");
       tw.WriteLine("      The number of times to call the Random Number Generator.");
       tw.WriteLine($"      If not specified, defaults to {DEFAULT_CALL_COUNT:N0}");
       tw.WriteLine();
-      tw.WriteLine("   [{SIGNIFICANCE_SHORT} | {SIGNIFICANCE_LONG} Significance]");
+      tw.WriteLine($"   [{SIGNIFICANCE_SHORT} | {SIGNIFICANCE_LONG} Significance]");
       tw.WriteLine("      The statistical significance level.");
       tw.WriteLine($"      If not specified, defaults to {DEFAULT_SIGNIFICANCE}");
       tw.WriteLine();
