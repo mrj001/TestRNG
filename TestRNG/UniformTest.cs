@@ -18,6 +18,7 @@ using System;
 using System.ComponentModel;
 using System.IO;
 using System.Text;
+using TestRNG.RNG;
 using TestRNG.Statistics;
 
 namespace TestRNG;
@@ -27,17 +28,17 @@ public static class UniformTest
    /// <summary>
    /// Tests for uniform distribution of the results of the Random Number Generator.
    /// </summary>
+   /// <param name="rnd">The random number generator to test.</param>
    /// <param name="binCount">The number of bins into which the random numbers are divided.</param>
    /// <param name="callCount">The number of times to call the random number generator.</param>
    /// <param name="sigLevel">The significance level to use.</param>
    /// <param name="outputFileName">The name of the output file in which to store the raw results.  
    /// These results include only  the bin counts (observed) and the expected values.  If null, no 
    /// output file is created.</param>
-   public static void Test(int binCount, int callCount, double sigLevel, string? outputFileName)
+   public static void Test(IRandom rnd, int binCount, int callCount, double sigLevel, string? outputFileName)
    {
       int[] bins = new int[binCount];
 
-      Random rnd = new();
       for (int j = 0; j < callCount; j++)
       {
          int value = rnd.Next(binCount);

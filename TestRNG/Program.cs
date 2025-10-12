@@ -15,6 +15,7 @@
 // TestRNGSln. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using TestRNG.RNG;
 
 namespace TestRNG;
 
@@ -26,10 +27,12 @@ public class Program
       if (clArgs is null)
          return;
 
+      IRandom random = new SystemRandom();
+
       switch (clArgs.SelectedTest)
       {
          case TestSelector.Uniform:
-            DoUniformTest(clArgs);
+            DoUniformTest(random, clArgs);
             break;
 
          default:
@@ -37,7 +40,7 @@ public class Program
       }
    }
 
-   private static void DoUniformTest(CommandLineArgs args)
+   private static void DoUniformTest(IRandom random, CommandLineArgs args)
    {
       Console.WriteLine("Running Uniform test");
       if (!string.IsNullOrEmpty(args.OutputFileName))
@@ -49,6 +52,6 @@ public class Program
       Console.WriteLine($"Call Count: {args.CallCount:N0}");
       Console.WriteLine($"Significance: {args.Significance}");
 
-      UniformTest.Test(args.BinCount, args.CallCount, args.Significance, args.OutputFileName);
+      UniformTest.Test(random, args.BinCount, args.CallCount, args.Significance, args.OutputFileName);
    }
 }
