@@ -14,32 +14,33 @@
 // You should have received a copy of the GNU General Public License along with
 // TestRNGSln. If not, see <https://www.gnu.org/licenses/>.
 
-namespace TestRNG;
+using TestRNG.RNG;
 
-public enum TestSelector
+namespace TestTestRNG.Tests;
+
+/// <summary>
+/// This FakeRandom class returns the "random" bits passed to the constructor.
+/// </summary>
+public class FakeRandom : IRandom
 {
-   /// <summary>
-   /// Specifies the Uniform Test.
-   /// </summary>
-   Uniform,
+   private readonly string _bitString;
+   private int index = 0;
 
-   /// <summary>
-   /// Specifies the Frequency(Monobit) Test.
-   /// </summary>
-   Monobit,
+   public FakeRandom(string bitString)
+   {
+      _bitString = bitString;
+   }
 
-   /// <summary>
-   /// Specifies the Frequency Test within a Block.
-   /// </summary>
-   FrequencyBlock,
+   public int Next(int maxValue)
+   {
+      throw new System.NotImplementedException();
+   }
 
-   /// <summary>
-   /// Specifies the Runs test (Section 2.3 of Ref. A)
-   /// </summary>
-   Runs,
-
-   /// <summary>
-   /// Specifies the Longest Run of Ones in a Block test (Section 2.4 of Ref. A)
-   /// </summary>
-   LongestRun,
+   public bool NextBit()
+   {
+      // NOTE: This will throw an exception if called too many times.
+      bool rv = _bitString[index] == '1';
+      index++;
+      return rv;
+   }
 }

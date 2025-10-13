@@ -15,7 +15,6 @@
 // TestRNGSln. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Configuration.Assemblies;
 using TestRNG.RNG;
 using TestRNG.Tests;
 
@@ -47,6 +46,10 @@ public class Program
 
          case TestSelector.Runs:
             DoRunsTest(random, clArgs);
+            break;
+
+         case TestSelector.LongestRun:
+            DoLongestRunTest(random, clArgs);
             break;
 
          default:
@@ -106,6 +109,25 @@ public class Program
       double testStatistic, pValue;
       bool result = Runs.Test(random, clArgs.CallCount, clArgs.Significance, out testStatistic, out pValue);
 
+      Console.WriteLine($"Test Statistic: {testStatistic}");
+      Console.WriteLine($"p-Value: {pValue}");
+      Console.WriteLine("Null hypothesis is {0}.", result ? "ACCEPTED" : "REJECTED");
+   }
+
+   private static void DoLongestRunTest(IRandom random, CommandLineArgs clArgs)
+   {
+      Console.WriteLine("Running Longest Run of Ones Test");
+      Console.WriteLine($"Block Size: {clArgs.LongestRunBlockSize}");
+      Console.WriteLine($"Call Count: {clArgs.CallCount:N0}");
+      Console.WriteLine($"Significance: {clArgs.Significance}");
+
+      double testStatistic, pValue;
+      int callCountBefore = clArgs.CallCount;
+      int callCountAfter = callCountBefore;
+      bool result = LongestRun.Test(random, clArgs.LongestRunBlockSize, ref callCountAfter, clArgs.Significance, out testStatistic, out pValue);
+
+      if (callCountBefore != callCountAfter)
+         Console.WriteLine($"Call Count was adjusted to {callCountAfter:N0}");
       Console.WriteLine($"Test Statistic: {testStatistic}");
       Console.WriteLine($"p-Value: {pValue}");
       Console.WriteLine("Null hypothesis is {0}.", result ? "ACCEPTED" : "REJECTED");

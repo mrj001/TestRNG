@@ -16,6 +16,7 @@
 
 using System;
 using System.IO;
+using TestRNG.Tests;
 
 namespace TestRNG;
 
@@ -49,6 +50,9 @@ public class CommandLineArgs
    private const string BLOCK_SIZE_LONG = "-blocksize";
    private const int BLOCK_SIZE_DEFAULT = 31;
    private readonly int _blockSize = 0;
+
+   private const LongestRunBlockSize BLOCK_SIZE_LONGEST_RUNS_DEFAULT = LongestRunBlockSize.Small;
+   private LongestRunBlockSize _longestRunsBlockSize = BLOCK_SIZE_LONGEST_RUNS_DEFAULT;
 
    #region Construction
    private CommandLineArgs(string[] args)
@@ -96,6 +100,10 @@ public class CommandLineArgs
 
          case TestSelector.Runs:
             ParseRunsTestArgs(args, ref argIndex, out _callCount, out _significance);
+            break;
+
+         case TestSelector.LongestRun:
+            ParseLongestRunTestArgs(args, ref argIndex, out _longestRunsBlockSize, out _callCount, out _significance);
             break;
 
          default:
@@ -211,6 +219,37 @@ public class CommandLineArgs
       }
    }
 
+   private static void ParseLongestRunTestArgs(string[] args, ref int argIndex, out LongestRunBlockSize blockSize, out int callCount, out double significance)
+   {
+      callCount = 0;
+      significance = DEFAULT_SIGNIFICANCE;
+      blockSize = BLOCK_SIZE_LONGEST_RUNS_DEFAULT;
+
+      while (argIndex < args.Length)
+      {
+         if (args[argIndex] == CALL_COUNT_SHORT || args[argIndex] == CALL_COUNT_LONG)
+         {
+            argIndex++;
+            callCount = ParseIntegerArg(args[argIndex - 1], args, ref argIndex);
+         }
+         else if (args[argIndex] == SIGNIFICANCE_SHORT || args[argIndex] == SIGNIFICANCE_SHORT)
+         {
+            argIndex++;
+            significance = ParseDoubleArg(args[argIndex - 1], args, ref argIndex);
+         }
+         else if (args[argIndex] == BLOCK_SIZE_SHORT || args[argIndex] == BLOCK_SIZE_LONG)
+         {
+            argIndex++;
+            blockSize = Enum.Parse<LongestRunBlockSize>(args[argIndex], true);
+            argIndex++;
+         }
+         else
+         {
+            throw new ArgumentException($"Unknown argument: '{args[argIndex]}'");
+         }
+      }
+   }
+
    private static int ParseIntegerArg(string arg, string[] args, ref int argIndex)
    {
       if (argIndex >= args.Length)
@@ -282,6 +321,7 @@ public class CommandLineArgs
       tw.WriteLine("\tmonobit");
       tw.WriteLine("\tfrequencyblock");
       tw.WriteLine("\truns");
+      tw.WriteLine("\tlongestrun");
       tw.WriteLine();
 
       tw.WriteLine($"Uniform test arguments:");
@@ -318,6 +358,21 @@ public class CommandLineArgs
       tw.WriteLine();
       PrintSignificanceHelp(tw);
       tw.WriteLine();
+
+      tw.WriteLine("Longest Run of Ones in a Block Test arguments:");
+      tw.WriteLine($"   [{BLOCK_SIZE_SHORT} | {BLOCK_SIZE_LONG} Small | Medium | Large]");
+      tw.WriteLine("      Specifies the number of bits in a block.");
+      tw.WriteLine($"         Small = {(int)LongestRunBlockSize.Small:N0}");
+      tw.WriteLine($"         Medium = {(int)LongestRunBlockSize.Medium:N0}");
+      tw.WriteLine($"         Large = {(int)LongestRunBlockSize.Large:N0}");
+      tw.WriteLine($"      If not specified, defaults to {BLOCK_SIZE_LONGEST_RUNS_DEFAULT}");
+      tw.WriteLine();
+      tw.WriteLine($"   [{CALL_COUNT_SHORT} | {CALL_COUNT_LONG} CallCount]");
+      tw.WriteLine("      The number of times to call the Random Number Generator.");
+      tw.WriteLine("      If not specified, defaults to a minimum value determined by the block size.");
+      tw.WriteLine();
+      PrintSignificanceHelp(tw);
+      tw.WriteLine();
    }
 
    private static void PrintCallCountHelp(TextWriter tw)
@@ -347,6 +402,8 @@ public class CommandLineArgs
    public double Significance { get => _significance; }
 
    public int BlockSize { get => _blockSize; }
+
+   public LongestRunBlockSize LongestRunBlockSize { get => _longestRunsBlockSize; }
    
    public int blockCount { get => _blockCount; }
 }
