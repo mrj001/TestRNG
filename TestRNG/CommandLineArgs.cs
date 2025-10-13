@@ -75,6 +75,10 @@ public class CommandLineArgs
             ParseUniformTestArgs(args, ref argIndex, out _binCount, out _callCount, out _significance);
             break;
 
+         case TestSelector.Monobit:
+            ParseMonobitTestArgs(args, ref argIndex, out _callCount, out _significance);
+            break;
+
          default:
             break;
       }
@@ -94,6 +98,30 @@ public class CommandLineArgs
             binCount = ParseIntegerArg(args[argIndex - 1], args, ref argIndex);
          }
          else if (args[argIndex] == CALL_COUNT_SHORT || args[argIndex] == CALL_COUNT_LONG)
+         {
+            argIndex++;
+            callCount = ParseIntegerArg(args[argIndex - 1], args, ref argIndex);
+         }
+         else if (args[argIndex] == SIGNIFICANCE_SHORT || args[argIndex] == SIGNIFICANCE_SHORT)
+         {
+            argIndex++;
+            significance = ParseDoubleArg(args[argIndex - 1], args, ref argIndex);
+         }
+         else
+         {
+            throw new ArgumentException($"Unknown argument: '{args[argIndex]}");
+         }
+      }
+   }
+
+   private static void ParseMonobitTestArgs(string[] args, ref int argIndex, out int callCount, out double significance)
+   {
+      callCount = DEFAULT_CALL_COUNT;
+      significance = DEFAULT_SIGNIFICANCE;
+
+      while (argIndex < args.Length)
+      {
+         if (args[argIndex] == CALL_COUNT_SHORT || args[argIndex] == CALL_COUNT_LONG)
          {
             argIndex++;
             callCount = ParseIntegerArg(args[argIndex - 1], args, ref argIndex);
@@ -178,21 +206,38 @@ public class CommandLineArgs
       tw.WriteLine();
       tw.WriteLine("TestName is one of");
       tw.WriteLine("\tuniform");
+      tw.WriteLine("\tmonobit");
       tw.WriteLine();
       tw.WriteLine($"Uniform test arguments:");
       tw.WriteLine($"   [{BIN_COUNT_SHORT} | {BIN_COUNT_LONG} BinCount]");
       tw.WriteLine("      BinCount must be at least 2.");
       tw.WriteLine($"      If not specified, defaults to {DEFAULT_BIN_COUNT:N0}");
       tw.WriteLine();
+      PrintCallCountHelp(tw);
+      tw.WriteLine();
+      PrintSignificanceHelp(tw);
+      tw.WriteLine();
+      tw.WriteLine("Monobit test arguments:");
+      PrintCallCountHelp(tw);
+      tw.WriteLine();
+      PrintSignificanceHelp(tw);
+      tw.WriteLine();
+   }
+
+   private static void PrintCallCountHelp(TextWriter tw)
+   {
       tw.WriteLine($"   [{CALL_COUNT_SHORT} | {CALL_COUNT_LONG} CallCount]");
       tw.WriteLine("      The number of times to call the Random Number Generator.");
       tw.WriteLine($"      If not specified, defaults to {DEFAULT_CALL_COUNT:N0}");
-      tw.WriteLine();
+   }
+
+   private static void PrintSignificanceHelp(TextWriter tw)
+   {
       tw.WriteLine($"   [{SIGNIFICANCE_SHORT} | {SIGNIFICANCE_LONG} Significance]");
       tw.WriteLine("      The statistical significance level.");
       tw.WriteLine($"      If not specified, defaults to {DEFAULT_SIGNIFICANCE}");
-      tw.WriteLine();
    }
+
    #endregion
 
    public TestSelector SelectedTest { get => _selectedTest; }

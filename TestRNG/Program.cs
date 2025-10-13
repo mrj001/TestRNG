@@ -16,6 +16,7 @@
 
 using System;
 using TestRNG.RNG;
+using TestRNG.Tests;
 
 namespace TestRNG;
 
@@ -33,6 +34,10 @@ public class Program
       {
          case TestSelector.Uniform:
             DoUniformTest(random, clArgs);
+            break;
+
+         case TestSelector.Monobit:
+            DoMonobitTest(random, clArgs);
             break;
 
          default:
@@ -53,5 +58,19 @@ public class Program
       Console.WriteLine($"Significance: {args.Significance}");
 
       UniformTest.Test(random, args.BinCount, args.CallCount, args.Significance, args.OutputFileName);
+   }
+
+   private static void DoMonobitTest(IRandom random, CommandLineArgs args)
+   {
+      Console.WriteLine("Running Monobit test");
+      Console.WriteLine($"Call Count: {args.CallCount:N0}");
+      Console.WriteLine($"Significance: {args.Significance}");
+
+      double testStatistic, pValue;
+      bool result = MonobitTest.Test(random, args.CallCount, args.Significance, out testStatistic, out pValue);
+
+      Console.WriteLine($"Test Statistic: {testStatistic}");
+      Console.WriteLine($"p-Value: {pValue}");
+      Console.WriteLine("Null hypothesis is {0}.", result ? "ACCEPTED" : "REJECTED");
    }
 }

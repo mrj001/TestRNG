@@ -15,6 +15,7 @@
 // TestRNGSln. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Security.Cryptography.X509Certificates;
 
 namespace TestRNG.Statistics;
 
@@ -87,5 +88,51 @@ public static class Normal
          return (1 + z) / 2.0;
       else
          return (1 - z) / 2.0;
+   }
+
+   /// <summary>
+   /// Calculates the Error Function erf(x).
+   /// </summary>
+   /// <param name="z"></param>
+   /// <returns></returns>
+   /// <remarks>
+   /// <para>
+   /// This is based upon equation 7.1.26 of Ref B.
+   /// </para>
+   /// </remarks>
+   public static double ErrorFunction(double z)
+   {
+      return 1.0 - ComplementaryErrorFunction(z);
+   }
+
+   /// <summary>
+   /// Calculates the Complementary Error Function (erfc(z))
+   /// </summary>
+   /// <param name="z"></param>
+   /// <returns></returns>
+   /// <remarks>
+   /// <para>
+   /// This is based upon equation 7.1.26 of Ref B.
+   /// </para>
+   /// </remarks>
+   public static double ComplementaryErrorFunction(double z)
+   {
+      double p = 0.3275911;
+      double a1 = 0.254829592;
+      double a2 = -0.284496736;
+      double a3 = 1.421413741;
+      double a4 = -1.453152027;
+      double a5 = 1.061405429;
+      double t = 1.0 / (1.0 + p * z);
+      double e = Math.Exp(-z * z);
+
+      double rv = a5 * t;
+      rv = (rv + a4) * t;
+      rv = (rv + a3) * t;
+      rv = (rv + a2) * t;
+      rv = (rv + a1) * t;
+      rv *= e;
+
+      return rv;
    }
 }

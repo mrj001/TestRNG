@@ -21,5 +21,10 @@ public enum TestSelector
    /// <summary>
    /// Specifies the Uniform Test.
    /// </summary>
-   Uniform
+   Uniform,
+
+   /// <summary>
+   /// Specifies the Frequency(Monobit) Test.
+   /// </summary>
+   Monobit
 }

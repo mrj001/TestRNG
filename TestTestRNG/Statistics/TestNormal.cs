@@ -52,4 +52,30 @@ public class TestNormal
 
       Assert.True(Math.Abs(expected - actual) <= tolerance);
    }
+
+   [Fact]
+   public void ErrorFunction()
+   {
+      double z = 0.632455532 / Math.Sqrt(2.0);
+      double expected = 0.472911;
+
+      double actual = Normal.ErrorFunction(z);
+
+      // Equation 7.1.26 of Ref. B indicates that it is accurate
+      // to within 1.5E-7, so that is used as the tolerance here.
+      Assert.True(Math.Abs(expected - actual) < 0.00000015);
+   }
+
+   [Fact]
+   public void ComplementaryErrorFunction()
+   {
+      double z = 0.632455532 / Math.Sqrt(2.0);
+      double expected = 0.527089;
+
+      double actual = Normal.ComplementaryErrorFunction(z);
+
+      // Equation 7.1.26 of Ref. B indicates that it is accurate
+      // to within 1.5E-7, so that is used as the tolerance here.
+      Assert.True(Math.Abs(expected - actual) < 0.00000015);
+   }
 }
