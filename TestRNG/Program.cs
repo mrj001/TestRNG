@@ -45,6 +45,10 @@ public class Program
             DoFrequencyBlockTest(random, clArgs);
             break;
 
+         case TestSelector.Runs:
+            DoRunsTest(random, clArgs);
+            break;
+
          default:
             break;
       }
@@ -87,6 +91,20 @@ public class Program
 
       double testStatistic, pValue;
       bool result = FrequencyBlock.Test(random, clArgs.BlockSize, clArgs.blockCount, clArgs.Significance, out testStatistic, out pValue);
+
+      Console.WriteLine($"Test Statistic: {testStatistic}");
+      Console.WriteLine($"p-Value: {pValue}");
+      Console.WriteLine("Null hypothesis is {0}.", result ? "ACCEPTED" : "REJECTED");
+   }
+
+   private static void DoRunsTest(IRandom random, CommandLineArgs clArgs)
+   {
+      Console.WriteLine("Running Runs Test");
+      Console.WriteLine($"Call Count: {clArgs.CallCount:N0}");
+      Console.WriteLine($"Significance: {clArgs.Significance}");
+
+      double testStatistic, pValue;
+      bool result = Runs.Test(random, clArgs.CallCount, clArgs.Significance, out testStatistic, out pValue);
 
       Console.WriteLine($"Test Statistic: {testStatistic}");
       Console.WriteLine($"p-Value: {pValue}");

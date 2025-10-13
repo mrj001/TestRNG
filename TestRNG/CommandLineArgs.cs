@@ -32,6 +32,7 @@ public class CommandLineArgs
    private const string CALL_COUNT_SHORT = "-c";
    private const string CALL_COUNT_LONG = "--calls";
    private const int DEFAULT_CALL_COUNT = 100_000;
+   private const int DEFAULT_RUNS_CALL_COUNT = 100;
    private readonly int _callCount = 0;
 
    private const string SIGNIFICANCE_SHORT = "-s";
@@ -91,6 +92,10 @@ public class CommandLineArgs
 
          case TestSelector.FrequencyBlock:
             ParseFrequencyBlockTestArgs(args, ref argIndex, out _blockSize, out _blockCount, out _significance);
+            break;
+
+         case TestSelector.Runs:
+            ParseRunsTestArgs(args, ref argIndex, out _callCount, out _significance);
             break;
 
          default:
@@ -182,6 +187,30 @@ public class CommandLineArgs
       }
    }
 
+   private static void ParseRunsTestArgs(string[] args, ref int argIndex, out int callCount, out double significance)
+   {
+      callCount = DEFAULT_RUNS_CALL_COUNT;
+      significance = DEFAULT_SIGNIFICANCE;
+
+      while (argIndex < args.Length)
+      {
+         if (args[argIndex] == CALL_COUNT_SHORT || args[argIndex] == CALL_COUNT_LONG)
+         {
+            argIndex++;
+            callCount = ParseIntegerArg(args[argIndex - 1], args, ref argIndex);
+         }
+         else if (args[argIndex] == SIGNIFICANCE_SHORT || args[argIndex] == SIGNIFICANCE_SHORT)
+         {
+            argIndex++;
+            significance = ParseDoubleArg(args[argIndex - 1], args, ref argIndex);
+         }
+         else
+         {
+            throw new ArgumentException($"Unknown argument: '{args[argIndex]}'");
+         }
+      }
+   }
+
    private static int ParseIntegerArg(string arg, string[] args, ref int argIndex)
    {
       if (argIndex >= args.Length)
@@ -252,6 +281,7 @@ public class CommandLineArgs
       tw.WriteLine("\tuniform");
       tw.WriteLine("\tmonobit");
       tw.WriteLine("\tfrequencyblock");
+      tw.WriteLine("\truns");
       tw.WriteLine();
 
       tw.WriteLine($"Uniform test arguments:");
@@ -277,6 +307,14 @@ public class CommandLineArgs
       tw.WriteLine($"   [{BLOCK_COUNT_SHORT} | {BLOCK_COUNT_LONG}]");
       tw.WriteLine("      Specifies the number of block to use in the test.");
       tw.WriteLine($"      If not specified, defaults to {BLOCK_COUNT_DEFAULT}");
+      tw.WriteLine();
+      PrintSignificanceHelp(tw);
+      tw.WriteLine();
+
+      tw.WriteLine("Runs Test arguments:");
+      tw.WriteLine($"   [{CALL_COUNT_SHORT} | {CALL_COUNT_LONG}]");
+      tw.WriteLine("      Specifies the number of times to call the Random Number Generator.");
+      tw.WriteLine($"      If not specified, defaults to {DEFAULT_RUNS_CALL_COUNT}");
       tw.WriteLine();
       PrintSignificanceHelp(tw);
       tw.WriteLine();

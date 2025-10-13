@@ -32,4 +32,9 @@ public enum TestSelector
    /// Specifies the Frequency Test within a Block.
    /// </summary>
    FrequencyBlock,
+
+   /// <summary>
+   /// Specifies the Runs test (Section 2.3 of Ref. A)
+   /// </summary>
+   Runs,
 }
