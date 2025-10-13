@@ -39,6 +39,16 @@ public class CommandLineArgs
    private const double DEFAULT_SIGNIFICANCE = 0.05;
    private readonly double _significance = 0.05;
 
+   private const string BLOCK_COUNT_SHORT = "-bc";
+   private const string BLOCK_COUNT_LONG = "--blockcount";
+   private const int BLOCK_COUNT_DEFAULT = 100;
+   private readonly int _blockCount = 0;
+
+   private const string BLOCK_SIZE_SHORT = "-bs";
+   private const string BLOCK_SIZE_LONG = "-blocksize";
+   private const int BLOCK_SIZE_DEFAULT = 31;
+   private readonly int _blockSize = 0;
+
    #region Construction
    private CommandLineArgs(string[] args)
    {
@@ -77,6 +87,10 @@ public class CommandLineArgs
 
          case TestSelector.Monobit:
             ParseMonobitTestArgs(args, ref argIndex, out _callCount, out _significance);
+            break;
+
+         case TestSelector.FrequencyBlock:
+            ParseFrequencyBlockTestArgs(args, ref argIndex, out _blockSize, out _blockCount, out _significance);
             break;
 
          default:
@@ -134,6 +148,36 @@ public class CommandLineArgs
          else
          {
             throw new ArgumentException($"Unknown argument: '{args[argIndex]}");
+         }
+      }
+   }
+
+   private static void ParseFrequencyBlockTestArgs(string[] args, ref int argIndex, out int blockSize, out int blockCount, out double significance)
+   {
+      blockSize = BLOCK_SIZE_DEFAULT;
+      blockCount = BLOCK_COUNT_DEFAULT;
+      significance = DEFAULT_SIGNIFICANCE;
+
+      while (argIndex < args.Length)
+      {
+         if (args[argIndex] == BLOCK_SIZE_SHORT || args[argIndex] == BLOCK_SIZE_LONG)
+         {
+            argIndex++;
+            blockSize = ParseIntegerArg(args[argIndex - 1], args, ref argIndex);
+         }
+         else if (args[argIndex] == BLOCK_COUNT_SHORT || args[argIndex] == BLOCK_COUNT_LONG)
+         {
+            argIndex++;
+            blockCount = ParseIntegerArg(args[argIndex - 1], args, ref argIndex);
+         }
+         else if (args[argIndex] == SIGNIFICANCE_SHORT || args[argIndex] == SIGNIFICANCE_SHORT)
+         {
+            argIndex++;
+            significance = ParseDoubleArg(args[argIndex - 1], args, ref argIndex);
+         }
+         else
+         {
+            throw new ArgumentException($"Unknown argument: '{args[argIndex]}'");
          }
       }
    }
@@ -207,7 +251,9 @@ public class CommandLineArgs
       tw.WriteLine("TestName is one of");
       tw.WriteLine("\tuniform");
       tw.WriteLine("\tmonobit");
+      tw.WriteLine("\tfrequencyblock");
       tw.WriteLine();
+
       tw.WriteLine($"Uniform test arguments:");
       tw.WriteLine($"   [{BIN_COUNT_SHORT} | {BIN_COUNT_LONG} BinCount]");
       tw.WriteLine("      BinCount must be at least 2.");
@@ -219,6 +265,18 @@ public class CommandLineArgs
       tw.WriteLine();
       tw.WriteLine("Monobit test arguments:");
       PrintCallCountHelp(tw);
+      tw.WriteLine();
+      PrintSignificanceHelp(tw);
+      tw.WriteLine();
+
+      tw.WriteLine("Frequency Block Test arguments:");
+      tw.WriteLine($"   [{BLOCK_SIZE_SHORT} | {BLOCK_SIZE_LONG}]");
+      tw.WriteLine("      Specifies the number of bits in a block.");
+      tw.WriteLine($"      If not specified, defaults to {BLOCK_SIZE_DEFAULT}");
+      tw.WriteLine();
+      tw.WriteLine($"   [{BLOCK_COUNT_SHORT} | {BLOCK_COUNT_LONG}]");
+      tw.WriteLine("      Specifies the number of block to use in the test.");
+      tw.WriteLine($"      If not specified, defaults to {BLOCK_COUNT_DEFAULT}");
       tw.WriteLine();
       PrintSignificanceHelp(tw);
       tw.WriteLine();
@@ -247,6 +305,10 @@ public class CommandLineArgs
    public int BinCount { get => _binCount; }
 
    public int CallCount { get => _callCount; }
-   
+
    public double Significance { get => _significance; }
+
+   public int BlockSize { get => _blockSize; }
+   
+   public int blockCount { get => _blockCount; }
 }

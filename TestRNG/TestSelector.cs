@@ -26,5 +26,10 @@ public enum TestSelector
    /// <summary>
    /// Specifies the Frequency(Monobit) Test.
    /// </summary>
-   Monobit
+   Monobit,
+
+   /// <summary>
+   /// Specifies the Frequency Test within a Block.
+   /// </summary>
+   FrequencyBlock,
 }
