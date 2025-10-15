@@ -42,4 +42,9 @@ public enum TestSelector
    /// Specifies the Longest Run of Ones in a Block test (Section 2.4 of Ref. A)
    /// </summary>
    LongestRun,
+
+   /// <summary>
+   /// Specifies the Binary Matrix Rank test (Section 2.5 of Ref. A)
+   /// </summary>
+   MatrixRank,
 }

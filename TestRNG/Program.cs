@@ -15,6 +15,7 @@
 // TestRNGSln. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ComponentModel;
 using TestRNG.RNG;
 using TestRNG.Tests;
 
@@ -50,6 +51,10 @@ public class Program
 
          case TestSelector.LongestRun:
             DoLongestRunTest(random, clArgs);
+            break;
+
+         case TestSelector.MatrixRank:
+            DoBinaryMatrixRankTest(random, clArgs);
             break;
 
          default:
@@ -128,6 +133,29 @@ public class Program
 
       if (callCountBefore != callCountAfter)
          Console.WriteLine($"Call Count was adjusted to {callCountAfter:N0}");
+      Console.WriteLine($"Test Statistic: {testStatistic}");
+      Console.WriteLine($"p-Value: {pValue}");
+      Console.WriteLine("Null hypothesis is {0}.", result ? "ACCEPTED" : "REJECTED");
+   }
+
+   private static void DoBinaryMatrixRankTest(IRandom random, CommandLineArgs clArgs)
+   {
+      Console.WriteLine("Binary Matrix Rank Test");
+      Console.WriteLine($"Matrix Size: {clArgs.MatrixSize}");
+      Console.WriteLine($"Call Count: {clArgs.CallCount:N0}");
+      Console.WriteLine($"Significance: {clArgs.Significance}");
+
+      double testStatistic, pValue;
+      int callCountBefore = clArgs.CallCount;
+      int callCountAfter = callCountBefore;
+      int unusedBitCount;
+      bool result = BinaryMatrixRank.Test(random, clArgs.MatrixSize, ref callCountAfter, clArgs.Significance, out testStatistic, out pValue, out unusedBitCount);
+
+      int matrixCount = callCountAfter / (clArgs.MatrixSize * clArgs.MatrixSize);
+      Console.WriteLine($"Matrix Count: {matrixCount:N0}");
+      if (callCountBefore != callCountAfter)
+         Console.WriteLine($"Call Count was adjusted to {callCountAfter:N0}");
+      Console.WriteLine($"Unused Bit Count: {unusedBitCount:N0}");
       Console.WriteLine($"Test Statistic: {testStatistic}");
       Console.WriteLine($"p-Value: {pValue}");
       Console.WriteLine("Null hypothesis is {0}.", result ? "ACCEPTED" : "REJECTED");

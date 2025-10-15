@@ -51,6 +51,11 @@ public class CommandLineArgs
    private const int BLOCK_SIZE_DEFAULT = 31;
    private readonly int _blockSize = 0;
 
+   private const string MATRIX_SIZE_SHORT = "-ms";
+   private const string MATRIX_SIZE_LONG = "--matrixsize";
+   private const int MATRIX_SIZE_DEFAULT = 32;
+   private readonly int _matrixSize = 0;
+
    private const LongestRunBlockSize BLOCK_SIZE_LONGEST_RUNS_DEFAULT = LongestRunBlockSize.Small;
    private LongestRunBlockSize _longestRunsBlockSize = BLOCK_SIZE_LONGEST_RUNS_DEFAULT;
 
@@ -104,6 +109,10 @@ public class CommandLineArgs
 
          case TestSelector.LongestRun:
             ParseLongestRunTestArgs(args, ref argIndex, out _longestRunsBlockSize, out _callCount, out _significance);
+            break;
+
+         case TestSelector.MatrixRank:
+            ParseBinaryMatrixRankTestArgs(args, ref argIndex, out _callCount, out _matrixSize, out _significance);
             break;
 
          default:
@@ -250,6 +259,37 @@ public class CommandLineArgs
       }
    }
 
+   private static void ParseBinaryMatrixRankTestArgs(string[] args, ref int argIndex, out int callCount, out int matrixSize, out double significance)
+   {
+      callCount = 0;
+      significance = DEFAULT_SIGNIFICANCE;
+      matrixSize = MATRIX_SIZE_DEFAULT;
+
+
+      while (argIndex < args.Length)
+      {
+         if (args[argIndex] == CALL_COUNT_SHORT || args[argIndex] == CALL_COUNT_LONG)
+         {
+            argIndex++;
+            callCount = ParseIntegerArg(args[argIndex - 1], args, ref argIndex);
+         }
+         else if (args[argIndex] == SIGNIFICANCE_SHORT || args[argIndex] == SIGNIFICANCE_SHORT)
+         {
+            argIndex++;
+            significance = ParseDoubleArg(args[argIndex - 1], args, ref argIndex);
+         }
+         else if (args[argIndex] == MATRIX_SIZE_SHORT || args[argIndex] == MATRIX_SIZE_LONG)
+         {
+            argIndex++;
+            matrixSize = ParseIntegerArg(args[argIndex - 1], args, ref argIndex);
+         }
+         else
+         {
+            throw new ArgumentException($"Unknown argument: '{args[argIndex]}'");
+         }
+      }
+   }
+
    private static int ParseIntegerArg(string arg, string[] args, ref int argIndex)
    {
       if (argIndex >= args.Length)
@@ -322,6 +362,7 @@ public class CommandLineArgs
       tw.WriteLine("\tfrequencyblock");
       tw.WriteLine("\truns");
       tw.WriteLine("\tlongestrun");
+      tw.WriteLine("\tmatrixrank");
       tw.WriteLine();
 
       tw.WriteLine($"Uniform test arguments:");
@@ -373,6 +414,21 @@ public class CommandLineArgs
       tw.WriteLine();
       PrintSignificanceHelp(tw);
       tw.WriteLine();
+
+      tw.WriteLine("Binary Matrix Rank test arguments:");
+      tw.WriteLine($"   [{MATRIX_SIZE_SHORT} | {MATRIX_SIZE_LONG}]");
+      tw.WriteLine("      Specifies the number of rows and columns in a square matrix.");
+      tw.WriteLine($"      If not specified, defaults to {MATRIX_SIZE_DEFAULT}");
+      tw.WriteLine();
+      tw.WriteLine($"   [{CALL_COUNT_SHORT} | {CALL_COUNT_LONG} CallCount]");
+      tw.WriteLine("      The number of times to call the Random Number Generator.");
+      tw.WriteLine($"      If not specified, defaults to enough times to generate {BinaryMatrixRank.MINIMUM_MATRIX_COUNT} matrices.");
+      tw.WriteLine("      The specified number is subject to upward revision if required to achieve");
+      tw.WriteLine($"      minimum of {BinaryMatrixRank.MINIMUM_MATRIX_COUNT} matrices.  As many matrices as can be generated within the");
+      tw.WriteLine("      given number of calls will be generated.  Some trailing bits may be dropped.");
+      tw.WriteLine();
+      PrintSignificanceHelp(tw);
+      tw.WriteLine();
    }
 
    private static void PrintCallCountHelp(TextWriter tw)
@@ -404,6 +460,8 @@ public class CommandLineArgs
    public int BlockSize { get => _blockSize; }
 
    public LongestRunBlockSize LongestRunBlockSize { get => _longestRunsBlockSize; }
-   
+
    public int blockCount { get => _blockCount; }
+   
+   public int MatrixSize { get => _matrixSize; }
 }
