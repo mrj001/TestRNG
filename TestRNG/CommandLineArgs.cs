@@ -15,6 +15,7 @@
 // TestRNGSln. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ComponentModel;
 using System.IO;
 using TestRNG.Tests;
 
@@ -34,6 +35,8 @@ public class CommandLineArgs
    private const string CALL_COUNT_LONG = "--calls";
    private const int DEFAULT_CALL_COUNT = 100_000;
    private const int DEFAULT_RUNS_CALL_COUNT = 100;
+   public const int MINIMUM_SPECTRAL_CALL_COUNT = 1024;
+   private const int DEFAULT_SPECTRAL_CALL_COUNT = 1024;
    private readonly int _callCount = 0;
 
    private const string SIGNIFICANCE_SHORT = "-s";
@@ -113,6 +116,10 @@ public class CommandLineArgs
 
          case TestSelector.MatrixRank:
             ParseBinaryMatrixRankTestArgs(args, ref argIndex, out _callCount, out _matrixSize, out _significance);
+            break;
+
+         case TestSelector.Spectral:
+            ParseSpectralTestArgs(args, ref argIndex, out _callCount, out _significance);
             break;
 
          default:
@@ -290,6 +297,30 @@ public class CommandLineArgs
       }
    }
 
+   private static void ParseSpectralTestArgs(string[] args, ref int argIndex, out int callCount, out double significance)
+   {
+      callCount = DEFAULT_SPECTRAL_CALL_COUNT;
+      significance = DEFAULT_SIGNIFICANCE;
+
+      while (argIndex < args.Length)
+      {
+         if (args[argIndex] == CALL_COUNT_SHORT || args[argIndex] == CALL_COUNT_LONG)
+         {
+            argIndex++;
+            callCount = ParseIntegerArg(args[argIndex - 1], args, ref argIndex);
+         }
+         else if (args[argIndex] == SIGNIFICANCE_SHORT || args[argIndex] == SIGNIFICANCE_SHORT)
+         {
+            argIndex++;
+            significance = ParseDoubleArg(args[argIndex - 1], args, ref argIndex);
+         }
+         else
+         {
+            throw new ArgumentException($"Unknown argument: '{args[argIndex]}'");
+         }
+      }
+   }
+
    private static int ParseIntegerArg(string arg, string[] args, ref int argIndex)
    {
       if (argIndex >= args.Length)
@@ -426,6 +457,16 @@ public class CommandLineArgs
       tw.WriteLine("      The specified number is subject to upward revision if required to achieve");
       tw.WriteLine($"      minimum of {BinaryMatrixRank.MINIMUM_MATRIX_COUNT} matrices.  As many matrices as can be generated within the");
       tw.WriteLine("      given number of calls will be generated.  Some trailing bits may be dropped.");
+      tw.WriteLine();
+      PrintSignificanceHelp(tw);
+      tw.WriteLine();
+
+      tw.WriteLine("Spectral Test Arguments:");
+      tw.WriteLine($"   [{CALL_COUNT_SHORT} | {CALL_COUNT_LONG} CallCount]");
+      tw.WriteLine("      The number of times to call the Random Number Generator.");
+      tw.WriteLine($"      If not specified, defaults to {DEFAULT_SPECTRAL_CALL_COUNT:N0}");
+      tw.WriteLine("      If the specified number is not a power of two, it will be adjusted upward");
+      tw.WriteLine("      to the next power of two.");
       tw.WriteLine();
       PrintSignificanceHelp(tw);
       tw.WriteLine();

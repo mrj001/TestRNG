@@ -47,4 +47,10 @@ public enum TestSelector
    /// Specifies the Binary Matrix Rank test (Section 2.5 of Ref. A)
    /// </summary>
    MatrixRank,
+
+   /// <summary>
+   /// Specifies the Discrete Fourier Transform (Spectral) Test
+   /// (Section 2.6 of Ref. A)
+   /// </summary>
+   Spectral,
 }

@@ -57,6 +57,10 @@ public class Program
             DoBinaryMatrixRankTest(random, clArgs);
             break;
 
+         case TestSelector.Spectral:
+            DoSpectralTest(random, clArgs);
+            break;
+
          default:
             break;
       }
@@ -156,6 +160,24 @@ public class Program
       if (callCountBefore != callCountAfter)
          Console.WriteLine($"Call Count was adjusted to {callCountAfter:N0}");
       Console.WriteLine($"Unused Bit Count: {unusedBitCount:N0}");
+      Console.WriteLine($"Test Statistic: {testStatistic}");
+      Console.WriteLine($"p-Value: {pValue}");
+      Console.WriteLine("Null hypothesis is {0}.", result ? "ACCEPTED" : "REJECTED");
+   }
+
+   private static void DoSpectralTest(IRandom random, CommandLineArgs clArgs)
+   {
+      Console.WriteLine("Spectral Test");
+      Console.WriteLine($"Call Count: {clArgs.CallCount:N0}");
+      Console.WriteLine($"Significance: {clArgs.Significance}");
+
+      double testStatistic, pValue;
+      int callCountBefore = clArgs.CallCount;
+      int callCountAfter = callCountBefore;
+      bool result = Spectral.Test(random, ref callCountAfter, clArgs.Significance, out testStatistic, out pValue);
+
+      if (callCountBefore != callCountAfter)
+         Console.WriteLine($"Call Count was adjusted to {callCountAfter:N0}");
       Console.WriteLine($"Test Statistic: {testStatistic}");
       Console.WriteLine($"p-Value: {pValue}");
       Console.WriteLine("Null hypothesis is {0}.", result ? "ACCEPTED" : "REJECTED");
