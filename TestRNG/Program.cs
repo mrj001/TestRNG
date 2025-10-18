@@ -16,8 +16,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Formats.Tar;
 using System.Linq;
+using System.Security.Cryptography;
 using TestRNG.RNG;
+using TestRNG.Statistics;
 using TestRNG.Tests;
 using TestRNG.Utility;
 
@@ -197,23 +200,25 @@ public class Program
 
       int callCountBefore = clArgs.CallCount;
       int callCountAfter = callCountBefore;
-      Dictionary<int, bool> result = NonOverlapping.Test(random, ref callCountAfter, clArgs.Significance);
+      Dictionary<int, CombinedPValues> result = NonOverlapping.Test(random, ref callCountAfter, clArgs.Significance);
 
       if (callCountBefore != callCountAfter)
          Console.WriteLine($"Call Count was adjusted to {callCountAfter:N0}");
-      string[,] table = new string[result.Count + 1, 2];
+      string[,] table = new string[result.Count + 1, 3];
       table[0, 0] = "Length";
-      table[0, 1] = "Pass?";
+      table[0, 1] = "Fischer";
+      table[0, 2] = "P-Value";
       int rw = 0;
-      bool pass = true;
+      bool fischerPass = true;
       foreach (int len in result.Keys.OrderBy(x => x))
       {
          rw++;
          table[rw, 0] = len.ToString();
-         table[rw, 1] = result[len].ToString();
-         pass &= result[len];
+         table[rw, 1] = (result[len].FischerPValue >= clArgs.Significance) ? "ACCEPTED" : "REJECT";
+         table[rw, 2] = result[len].FischerPValue.ToString("0.000000");
+         fischerPass &= result[len].FischerPValue >= clArgs.Significance;
       }
       UtilityMethods.PrintTable(table);
-      Console.WriteLine("Null hypothesis is {0}.", pass ? "ACCEPTED" : "REJECTED");
+      Console.WriteLine("Overall, the Null Hypothesis is {0}.", fischerPass ? "ACCEPTED" : "REJECTED");
    }
 }

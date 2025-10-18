@@ -34,7 +34,7 @@ public static class NonOverlapping
    /// a multiple of the block count, it will be adjusted upwards to the next multiple of the block count.</param>
    /// <param name="sigLevel"></param>
    /// <returns>A Dictionary<int, bool>.  The key is the template length; the value is a pass/fail.</returns>
-   public static Dictionary<int, bool> Test(IRandom random, ref int callCount, double sigLevel)
+   public static Dictionary<int, CombinedPValues> Test(IRandom random, ref int callCount, double sigLevel)
    {
       int blockCount = 8;
       if (callCount % blockCount != 0)
@@ -56,15 +56,15 @@ public static class NonOverlapping
    /// <param name="blockCount">Corresponds to "N" in Section 2.7 of Ref. A</param>
    /// <param name="sigLevel"></param>
    /// <returns>A Dictionary<int, bool>.  The key is the template length; the value is a pass/fail.</returns>
-   private static Dictionary<int, bool> Test(bool[] bitStream, int blockCount, double sigLevel)
+   private static Dictionary<int, CombinedPValues> Test(bool[] bitStream, int blockCount, double sigLevel)
    {
-      Dictionary<int, bool> rv = new(20);
+      Dictionary<int, CombinedPValues> rv = new(20);
 
       // For each Template Length
       for (int templateLength = 2; templateLength <= 10; templateLength++)
       {
-         bool pass = (1.0 - sigLevel) < TestForEachTemplate(bitStream, blockCount, templateLength, sigLevel);
-         rv.Add(templateLength, pass);
+         CombinedPValues result = TestForEachTemplate(bitStream, blockCount, templateLength, sigLevel);
+         rv.Add(templateLength, result);
       }
 
       return rv;
@@ -79,24 +79,19 @@ public static class NonOverlapping
    /// <param name="sigLevel"></param>
    /// <returns>The ratio of passing templates to all templates.  A value of 0.0 indicates that all templates
    /// failed, while a value of 1.0 indicates that all templates passed.</returns>
-   private static double TestForEachTemplate(bool[] bitStream, int blockCount, int templateLength, double sigLevel)
+   private static CombinedPValues TestForEachTemplate(bool[] bitStream, int blockCount, int templateLength, double sigLevel)
    {
       double testStatistic;
       double pValue;
-      double passRatio;
-      int templateCount = 0;
-      int passCount = 0;
+      List<double> lstPValues = new();
 
       foreach (int template in _templateLibraries.Get(templateLength))
       {
-         templateCount++;
-         if (TestForEachBlock(bitStream, blockCount, templateLength, template, sigLevel, out testStatistic, out pValue))
-            passCount++;
+         TestForEachBlock(bitStream, blockCount, templateLength, template, sigLevel, out testStatistic, out pValue);
+         lstPValues.Add(pValue);
       }
 
-      passRatio = ((double)passCount) / templateCount;
-
-      return passRatio;
+      return new CombinedPValues(lstPValues.ToArray(), sigLevel);
    }
 
    private static bool TestForEachBlock(bool[] bitStream, int blockCount, int templateLength,
