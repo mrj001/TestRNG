@@ -37,6 +37,7 @@ public class CommandLineArgs
    private const int DEFAULT_RUNS_CALL_COUNT = 100;
    public const int MINIMUM_SPECTRAL_CALL_COUNT = 1024;
    private const int DEFAULT_SPECTRAL_CALL_COUNT = 1024;
+   private const int DEFAULT_NONOVERLAPPING_CALL_COUNT = 8_000;
    private readonly int _callCount = 0;
 
    private const string SIGNIFICANCE_SHORT = "-s";
@@ -120,6 +121,10 @@ public class CommandLineArgs
 
          case TestSelector.Spectral:
             ParseSpectralTestArgs(args, ref argIndex, out _callCount, out _significance);
+            break;
+
+         case TestSelector.NonOverlapping:
+            ParseNonoverlappingTestArgs(args, ref argIndex, out _callCount, out _significance);
             break;
 
          default:
@@ -321,6 +326,30 @@ public class CommandLineArgs
       }
    }
 
+   private static void ParseNonoverlappingTestArgs(string[] args, ref int argIndex, out int callCount, out double significance)
+   {
+      callCount = DEFAULT_NONOVERLAPPING_CALL_COUNT;
+      significance = DEFAULT_SIGNIFICANCE;
+
+      while (argIndex < args.Length)
+      {
+         if (args[argIndex] == CALL_COUNT_SHORT || args[argIndex] == CALL_COUNT_LONG)
+         {
+            argIndex++;
+            callCount = ParseIntegerArg(args[argIndex - 1], args, ref argIndex);
+         }
+         else if (args[argIndex] == SIGNIFICANCE_SHORT || args[argIndex] == SIGNIFICANCE_SHORT)
+         {
+            argIndex++;
+            significance = ParseDoubleArg(args[argIndex - 1], args, ref argIndex);
+         }
+         else
+         {
+            throw new ArgumentException($"Unknown argument: '{args[argIndex]}'");
+         }
+      }
+   }
+
    private static int ParseIntegerArg(string arg, string[] args, ref int argIndex)
    {
       if (argIndex >= args.Length)
@@ -394,6 +423,7 @@ public class CommandLineArgs
       tw.WriteLine("\truns");
       tw.WriteLine("\tlongestrun");
       tw.WriteLine("\tmatrixrank");
+      tw.WriteLine("\tnonoverlapping");
       tw.WriteLine();
 
       tw.WriteLine($"Uniform test arguments:");
@@ -467,6 +497,16 @@ public class CommandLineArgs
       tw.WriteLine($"      If not specified, defaults to {DEFAULT_SPECTRAL_CALL_COUNT:N0}");
       tw.WriteLine("      If the specified number is not a power of two, it will be adjusted upward");
       tw.WriteLine("      to the next power of two.");
+      tw.WriteLine();
+      PrintSignificanceHelp(tw);
+      tw.WriteLine();
+
+      tw.WriteLine("Non-overlapping Template Matching Test Arguments:");
+      tw.WriteLine($"   [{CALL_COUNT_SHORT} | {CALL_COUNT_LONG} CallCount]");
+      tw.WriteLine("      The number of times to call the Random Number Generator.");
+      tw.WriteLine($"      If not specified, defaults to {DEFAULT_NONOVERLAPPING_CALL_COUNT:N0}");
+      tw.WriteLine("      If the specified number is not a multiple of 8, it will be adjusted upward");
+      tw.WriteLine("      to the next multiple of 8.");
       tw.WriteLine();
       PrintSignificanceHelp(tw);
       tw.WriteLine();

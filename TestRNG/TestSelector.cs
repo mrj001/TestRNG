@@ -53,4 +53,9 @@ public enum TestSelector
    /// (Section 2.6 of Ref. A)
    /// </summary>
    Spectral,
+
+   /// <summary>
+   /// Specifies the Non-overlapping Template Test (Section 2.7 of Ref. A)
+   /// </summary>
+   NonOverlapping,
 }

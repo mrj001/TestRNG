@@ -15,9 +15,11 @@
 // TestRNGSln. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.ComponentModel;
+using System.Collections.Generic;
+using System.Linq;
 using TestRNG.RNG;
 using TestRNG.Tests;
+using TestRNG.Utility;
 
 namespace TestRNG;
 
@@ -59,6 +61,10 @@ public class Program
 
          case TestSelector.Spectral:
             DoSpectralTest(random, clArgs);
+            break;
+
+         case TestSelector.NonOverlapping:
+            DoNonoverlappingTest(random, clArgs);
             break;
 
          default:
@@ -181,5 +187,33 @@ public class Program
       Console.WriteLine($"Test Statistic: {testStatistic}");
       Console.WriteLine($"p-Value: {pValue}");
       Console.WriteLine("Null hypothesis is {0}.", result ? "ACCEPTED" : "REJECTED");
+   }
+
+   private static void DoNonoverlappingTest(IRandom random, CommandLineArgs clArgs)
+   {
+      Console.WriteLine("Non-overlapping Template Matching Test");
+      Console.WriteLine($"Call Count: {clArgs.CallCount:N0}");
+      Console.WriteLine($"Significance: {clArgs.Significance}");
+
+      int callCountBefore = clArgs.CallCount;
+      int callCountAfter = callCountBefore;
+      Dictionary<int, bool> result = NonOverlapping.Test(random, ref callCountAfter, clArgs.Significance);
+
+      if (callCountBefore != callCountAfter)
+         Console.WriteLine($"Call Count was adjusted to {callCountAfter:N0}");
+      string[,] table = new string[result.Count + 1, 2];
+      table[0, 0] = "Length";
+      table[0, 1] = "Pass?";
+      int rw = 0;
+      bool pass = true;
+      foreach (int len in result.Keys.OrderBy(x => x))
+      {
+         rw++;
+         table[rw, 0] = len.ToString();
+         table[rw, 1] = result[len].ToString();
+         pass &= result[len];
+      }
+      UtilityMethods.PrintTable(table);
+      Console.WriteLine("Null hypothesis is {0}.", pass ? "ACCEPTED" : "REJECTED");
    }
 }
