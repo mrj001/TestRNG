@@ -10,6 +10,16 @@
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
 
+  <!-- When building this Project, copy the test files to the output folder.  -->
+   <!-- This has no effect upon the nuget package. -->
+   <ItemGroup>
+      <None Include="TestFiles/**">
+         <Visible>false</Visible>
+         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+   </ItemGroup>
+
+
   <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.4" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />

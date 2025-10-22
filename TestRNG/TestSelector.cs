@@ -58,4 +58,9 @@ public enum TestSelector
    /// Specifies the Non-overlapping Template Test (Section 2.7 of Ref. A)
    /// </summary>
    NonOverlapping,
+
+   /// <summary>
+   /// Specifies the Overlapping Template Matching Test (Section 2.8 of Ref. A)
+   /// </summary>
+   Overlapping,
 }

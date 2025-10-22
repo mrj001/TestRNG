@@ -11,7 +11,7 @@
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
             "program": "${workspaceFolder}/TestRNG/bin/Debug/net8.0/TestRNG.dll",
-            "args": [ "nonoverlapping", "--calls", "8000", "-s", "0.01" ],
+            "args": [ "overlapping", "-s", "0.01" ],
             "cwd": "${workspaceFolder}/TestRNG",
             // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
             "console": "internalConsole",

@@ -15,10 +15,12 @@
 // TestRNGSln. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Formats.Tar;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Xml.Schema;
 using TestRNG.RNG;
 using TestRNG.Statistics;
 using TestRNG.Tests;
@@ -68,6 +70,10 @@ public class Program
 
          case TestSelector.NonOverlapping:
             DoNonoverlappingTest(random, clArgs);
+            break;
+
+         case TestSelector.Overlapping:
+            DoOverlappingTest(random, clArgs);
             break;
 
          default:
@@ -220,5 +226,18 @@ public class Program
       }
       UtilityMethods.PrintTable(table);
       Console.WriteLine("Overall, the Null Hypothesis is {0}.", fischerPass ? "ACCEPTED" : "REJECTED");
+   }
+
+   private static void DoOverlappingTest(IRandom random, CommandLineArgs clArgs)
+   {
+      Console.WriteLine("Overlapping Template Matching Test");
+      Console.WriteLine($"Significance: {clArgs.Significance}");
+
+      double testStatistic, pValue;
+      bool result = Overlapping.Test(random, clArgs.Significance, out testStatistic, out pValue);
+
+      Console.WriteLine($"Test Statistic: {testStatistic}");
+      Console.WriteLine($"p-Value: {pValue}");
+      Console.WriteLine("Null hypothesis is {0}.", result ? "ACCEPTED" : "REJECTED");
    }
 }

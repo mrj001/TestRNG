@@ -127,6 +127,10 @@ public class CommandLineArgs
             ParseNonoverlappingTestArgs(args, ref argIndex, out _callCount, out _significance);
             break;
 
+         case TestSelector.Overlapping:
+            ParseNonoverlappingTestArgs(args, ref argIndex, out _significance);
+            break;
+
          default:
             break;
       }
@@ -350,6 +354,24 @@ public class CommandLineArgs
       }
    }
 
+   private static void ParseNonoverlappingTestArgs(string[] args, ref int argIndex, out double significance)
+   {
+      significance = DEFAULT_SIGNIFICANCE;
+
+      while (argIndex < args.Length)
+      {
+         if (args[argIndex] == SIGNIFICANCE_SHORT || args[argIndex] == SIGNIFICANCE_SHORT)
+         {
+            argIndex++;
+            significance = ParseDoubleArg(args[argIndex - 1], args, ref argIndex);
+         }
+         else
+         {
+            throw new ArgumentException($"Unknown argument: '{args[argIndex]}'");
+         }
+      }
+   }
+
    private static int ParseIntegerArg(string arg, string[] args, ref int argIndex)
    {
       if (argIndex >= args.Length)
@@ -424,6 +446,7 @@ public class CommandLineArgs
       tw.WriteLine("\tlongestrun");
       tw.WriteLine("\tmatrixrank");
       tw.WriteLine("\tnonoverlapping");
+      tw.WriteLine("\toverlapping");
       tw.WriteLine();
 
       tw.WriteLine($"Uniform test arguments:");
@@ -507,6 +530,13 @@ public class CommandLineArgs
       tw.WriteLine($"      If not specified, defaults to {DEFAULT_NONOVERLAPPING_CALL_COUNT:N0}");
       tw.WriteLine("      If the specified number is not a multiple of 8, it will be adjusted upward");
       tw.WriteLine("      to the next multiple of 8.");
+      tw.WriteLine();
+      PrintSignificanceHelp(tw);
+      tw.WriteLine();
+
+      tw.WriteLine("Overlapping Template Matching Test Arguments:");
+      tw.WriteLine("   The code uses a 9-bit run of ones as the template, with 968 blocks");
+      tw.WriteLine("   of length 1032 bits with 5 degrees of freedom.");
       tw.WriteLine();
       PrintSignificanceHelp(tw);
       tw.WriteLine();
