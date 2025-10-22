@@ -131,6 +131,10 @@ public class CommandLineArgs
             ParseNonoverlappingTestArgs(args, ref argIndex, out _significance);
             break;
 
+         case TestSelector.Maurer:
+            ParseMaurerTestArgs(args, ref argIndex, out _blockSize, out _significance);
+            break;
+
          default:
             break;
       }
@@ -372,6 +376,30 @@ public class CommandLineArgs
       }
    }
 
+   private static void ParseMaurerTestArgs(string[] args, ref int argIndex, out int blockSize, out double significance)
+   {
+      blockSize = Maurer.BLOCK_SIZE_DEFAULT;
+      significance = DEFAULT_SIGNIFICANCE;
+
+      while (argIndex < args.Length)
+      {
+         if (args[argIndex] == BLOCK_SIZE_SHORT || args[argIndex] == BLOCK_SIZE_LONG)
+         {
+            argIndex++;
+            blockSize = ParseIntegerArg(args[argIndex - 1], args, ref argIndex);
+         }
+         if (args[argIndex] == SIGNIFICANCE_SHORT || args[argIndex] == SIGNIFICANCE_SHORT)
+         {
+            argIndex++;
+            significance = ParseDoubleArg(args[argIndex - 1], args, ref argIndex);
+         }
+         else
+         {
+            throw new ArgumentException($"Unknown argument: '{args[argIndex]}'");
+         }
+      }
+   }
+
    private static int ParseIntegerArg(string arg, string[] args, ref int argIndex)
    {
       if (argIndex >= args.Length)
@@ -447,6 +475,7 @@ public class CommandLineArgs
       tw.WriteLine("\tmatrixrank");
       tw.WriteLine("\tnonoverlapping");
       tw.WriteLine("\toverlapping");
+      tw.WriteLine("\tmaurer");
       tw.WriteLine();
 
       tw.WriteLine($"Uniform test arguments:");
@@ -537,6 +566,15 @@ public class CommandLineArgs
       tw.WriteLine("Overlapping Template Matching Test Arguments:");
       tw.WriteLine("   The code uses a 9-bit run of ones as the template, with 968 blocks");
       tw.WriteLine("   of length 1032 bits with 5 degrees of freedom.");
+      tw.WriteLine();
+      PrintSignificanceHelp(tw);
+      tw.WriteLine();
+
+      tw.WriteLine("Maurer's \"Universal Statistical\" Test");
+      tw.WriteLine($"   [{BLOCK_SIZE_SHORT} | {BLOCK_SIZE_LONG} L]");
+      tw.WriteLine($"      L will be a number between {Maurer.BLOCK_SIZE_MIN} and {Maurer.BLOCK_SIZE_MAX}");
+      tw.WriteLine("      The number of bits in a block will be 2**L.");
+      tw.WriteLine($"      If not specified, defaults to {Maurer.BLOCK_SIZE_MIN}");
       tw.WriteLine();
       PrintSignificanceHelp(tw);
       tw.WriteLine();

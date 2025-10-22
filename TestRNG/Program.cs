@@ -15,12 +15,9 @@
 // TestRNGSln. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Formats.Tar;
+using System.ComponentModel;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Xml.Schema;
 using TestRNG.RNG;
 using TestRNG.Statistics;
 using TestRNG.Tests;
@@ -74,6 +71,10 @@ public class Program
 
          case TestSelector.Overlapping:
             DoOverlappingTest(random, clArgs);
+            break;
+
+         case TestSelector.Maurer:
+            DoMaurerTest(random, clArgs);
             break;
 
          default:
@@ -235,6 +236,20 @@ public class Program
 
       double testStatistic, pValue;
       bool result = Overlapping.Test(random, clArgs.Significance, out testStatistic, out pValue);
+
+      Console.WriteLine($"Test Statistic: {testStatistic}");
+      Console.WriteLine($"p-Value: {pValue}");
+      Console.WriteLine("Null hypothesis is {0}.", result ? "ACCEPTED" : "REJECTED");
+   }
+
+   private static void DoMaurerTest(IRandom random, CommandLineArgs clArgs)
+   {
+      Console.WriteLine("Maurer's \"Universal Statistical\" Test");
+      Console.WriteLine($"Significance: {clArgs.Significance}");
+      Console.WriteLine($"Block Size: 2**{clArgs.BlockSize}");
+
+      double testStatistic, pValue;
+      bool result = Maurer.Test(random, clArgs.BlockSize, clArgs.Significance, out testStatistic, out pValue);
 
       Console.WriteLine($"Test Statistic: {testStatistic}");
       Console.WriteLine($"p-Value: {pValue}");

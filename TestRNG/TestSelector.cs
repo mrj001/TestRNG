@@ -63,4 +63,9 @@ public enum TestSelector
    /// Specifies the Overlapping Template Matching Test (Section 2.8 of Ref. A)
    /// </summary>
    Overlapping,
+
+   /// <summary>
+   /// Specifies Maurer's Universal Statistical Test (Section 2.9 of Ref. A)
+   /// </summary>
+   Maurer,
 }
