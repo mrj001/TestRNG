@@ -27,6 +27,10 @@ public static class GenerateTestFiles
    //  A Spigot Algorithm For The Digits Of Pi.
    //  The American Mathematical Monthly, Vol. 102, No. 3 (Mar. 1995) pp. 195-203
    // Accessed via: http://www.jstor.org/stable/2975006 on Monday, March 9, 2015.
+   //
+   // Note: The output of this method was confirmed by an independent implementation
+   // (conversion to base 2 from an independently sourced base 10) and found to
+   // be correct.
    public static void EFromSpigot(int numBits, string filename)
    {
       using (FileStream fs = new(filename, FileMode.Create, FileAccess.Write))
