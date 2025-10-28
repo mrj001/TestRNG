@@ -68,4 +68,9 @@ public enum TestSelector
    /// Specifies Maurer's Universal Statistical Test (Section 2.9 of Ref. A)
    /// </summary>
    Maurer,
+
+   /// <summary>
+   /// Specifies the Linear Complexity Test (Section 2.10 of Ref. A)
+   /// </summary>
+   Linear,
 }

@@ -77,6 +77,10 @@ public class Program
             DoMaurerTest(random, clArgs);
             break;
 
+         case TestSelector.Linear:
+            DoLinearComplexityTest(random, clArgs);
+            break;
+
          default:
             break;
       }
@@ -115,10 +119,10 @@ public class Program
    {
       Console.WriteLine("Running Frequency Block Test");
       Console.WriteLine($"Block Size: {clArgs.BlockSize}");
-      Console.WriteLine($"Block Count: {clArgs.blockCount}");
+      Console.WriteLine($"Block Count: {clArgs.BlockCount}");
 
       double testStatistic, pValue;
-      bool result = FrequencyBlock.Test(random, clArgs.BlockSize, clArgs.blockCount, clArgs.Significance, out testStatistic, out pValue);
+      bool result = FrequencyBlock.Test(random, clArgs.BlockSize, clArgs.BlockCount, clArgs.Significance, out testStatistic, out pValue);
 
       Console.WriteLine($"Test Statistic: {testStatistic}");
       Console.WriteLine($"p-Value: {pValue}");
@@ -250,6 +254,21 @@ public class Program
 
       double testStatistic, pValue;
       bool result = Maurer.Test(random, clArgs.BlockSize, clArgs.Significance, out testStatistic, out pValue);
+
+      Console.WriteLine($"Test Statistic: {testStatistic}");
+      Console.WriteLine($"p-Value: {pValue}");
+      Console.WriteLine("Null hypothesis is {0}.", result ? "ACCEPTED" : "REJECTED");
+   }
+
+   private static void DoLinearComplexityTest(IRandom random, CommandLineArgs clArgs)
+   {
+      Console.WriteLine("Linear Complexity Test");
+      Console.WriteLine($"Significance: {clArgs.Significance}");
+      Console.WriteLine($"Block Size: {clArgs.BlockSize}");
+      Console.WriteLine($"Block Count: {clArgs.BlockCount}");
+
+      double testStatistic, pValue;
+      bool result = LinearComplexity.Test(random, clArgs.BlockSize, clArgs.BlockCount, clArgs.Significance, out testStatistic, out pValue);
 
       Console.WriteLine($"Test Statistic: {testStatistic}");
       Console.WriteLine($"p-Value: {pValue}");

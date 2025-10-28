@@ -135,6 +135,10 @@ public class CommandLineArgs
             ParseMaurerTestArgs(args, ref argIndex, out _blockSize, out _significance);
             break;
 
+         case TestSelector.Linear:
+            ParseLinearComplexityTestArgs(args, ref argIndex, out _blockSize, out _blockCount, out _significance);
+            break;
+
          default:
             break;
       }
@@ -400,6 +404,36 @@ public class CommandLineArgs
       }
    }
 
+   private static void ParseLinearComplexityTestArgs(string[] args, ref int argIndex, out int blockSize, out int blockCount, out double significance)
+   {
+      significance = DEFAULT_SIGNIFICANCE;
+      blockSize = LinearComplexity.MINIMUM_BLOCK_SIZE;
+      blockCount = LinearComplexity.MINIMUM_BLOCK_COUNT;
+
+      while (argIndex < args.Length)
+      {
+         if (args[argIndex] == BLOCK_SIZE_SHORT || args[argIndex] == BLOCK_SIZE_LONG)
+         {
+            argIndex++;
+            blockSize = ParseIntegerArg(args[argIndex - 1], args, ref argIndex);
+         }
+         if (args[argIndex] == BLOCK_COUNT_SHORT || args[argIndex] == BLOCK_COUNT_LONG)
+         {
+            argIndex++;
+            blockCount = ParseIntegerArg(args[argIndex - 1], args, ref argIndex);
+         }
+         if (args[argIndex] == SIGNIFICANCE_SHORT || args[argIndex] == SIGNIFICANCE_SHORT)
+         {
+            argIndex++;
+            significance = ParseDoubleArg(args[argIndex - 1], args, ref argIndex);
+         }
+         else
+         {
+            throw new ArgumentException($"Unknown argument: '{args[argIndex]}'");
+         }
+      }
+   }
+
    private static int ParseIntegerArg(string arg, string[] args, ref int argIndex)
    {
       if (argIndex >= args.Length)
@@ -476,6 +510,7 @@ public class CommandLineArgs
       tw.WriteLine("\tnonoverlapping");
       tw.WriteLine("\toverlapping");
       tw.WriteLine("\tmaurer");
+      tw.WriteLine("\tlinear");
       tw.WriteLine();
 
       tw.WriteLine($"Uniform test arguments:");
@@ -578,6 +613,19 @@ public class CommandLineArgs
       tw.WriteLine();
       PrintSignificanceHelp(tw);
       tw.WriteLine();
+
+      tw.WriteLine("Linear Complexity Test");
+      tw.WriteLine($"   [{BLOCK_SIZE_SHORT} | {BLOCK_SIZE_LONG} M]");
+      tw.WriteLine($"      M must be a number between {LinearComplexity.MINIMUM_BLOCK_SIZE} and {LinearComplexity.MAXIMUM_BLOCK_SIZE}");
+      tw.WriteLine($"      If not specified, defaults to {LinearComplexity.MINIMUM_BLOCK_SIZE}");
+      tw.WriteLine();
+      tw.WriteLine($"   [{BLOCK_COUNT_SHORT} | {BLOCK_COUNT_LONG}]");
+      tw.WriteLine("      Specifies the number of blocks to run the test on.");
+      tw.WriteLine($"      This must be at least {LinearComplexity.MINIMUM_BLOCK_COUNT}");
+      tw.WriteLine($"      If not specified, defaults to {LinearComplexity.MINIMUM_BLOCK_COUNT}");
+      tw.WriteLine();
+      PrintSignificanceHelp(tw);
+      tw.WriteLine();
    }
 
    private static void PrintCallCountHelp(TextWriter tw)
@@ -610,7 +658,7 @@ public class CommandLineArgs
 
    public LongestRunBlockSize LongestRunBlockSize { get => _longestRunsBlockSize; }
 
-   public int blockCount { get => _blockCount; }
+   public int BlockCount { get => _blockCount; }
    
    public int MatrixSize { get => _matrixSize; }
 }
