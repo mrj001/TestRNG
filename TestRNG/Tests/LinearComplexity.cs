@@ -73,7 +73,7 @@ public static class LinearComplexity
          double npi = blockCount * pi[i];
          testStatistic += (v[i] - npi) * (v[i] - npi) / npi;
       }
-      pValue = Gamma.IncompleteGammaQ(v.Length / 2.0, testStatistic / 2.0);
+      pValue = Gamma.IncompleteGammaQ((v.Length - 1) / 2.0, testStatistic / 2.0);
 
       return pValue >= sigLevel;
    }
@@ -124,6 +124,7 @@ public static class LinearComplexity
          bitIndex++;
       if (bitIndex == bitCount)
          throw new ArgumentException("Entire sequence is zeroes.");
+      m = bitIndex;
       bitIndex++;
       c[bitIndex] = 1;
       l = bitIndex;
@@ -194,8 +195,8 @@ public static class LinearComplexity
          bitIndex++;
       }
 
-      coefficients = new int[l];
-      for (int j = 0; j < l; j++)
+      coefficients = new int[l + 1];
+      for (int j = 0; j <= l; j++)
          coefficients[j] = c[j];
 
       return l;

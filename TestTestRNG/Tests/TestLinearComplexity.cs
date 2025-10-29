@@ -17,11 +17,8 @@
 using System;
 using System.IO;
 using System.IO.Compression;
-using System.Linq.Expressions;
 using System.Reflection;
-using System.Security.Principal;
 using System.Text;
-using System.Xml.Schema;
 using TestRNG.RNG;
 using TestRNG.Tests;
 using Xunit;
@@ -34,9 +31,9 @@ public class TestLinearComplexity
    public void DoTest()
    {
       IRandom random = new FakeRandomFile("TestFiles/MillionBitsOfE.gz");
-      double expectedTestStatistic = 2.700348;
+      double expectedTestStatistic = 2.706147;   // See References/RecalculateSection2.10.8.ods
       double actualTestStatistic;
-      double expectedPValue = 0.845406;
+      double expectedPValue = 0.844721;          // See References/RecalculateSection2.10.8.ods
       double actualPValue;
       double tolerance = 1E-6;
       int blockSize = 1000;
@@ -78,7 +75,7 @@ public class TestLinearComplexity
          // This test case was harvested from the first 11 bits of the second block
          // of the 1,000,000 bits of e test.
          //  The correct answer was determined by the above online calculator.
-         rv.Add(7, "10011011", "00100100111");
+         rv.Add(7, "11011001", "00100100111");
 
          return rv;
       }
