@@ -81,6 +81,10 @@ public class Program
             DoLinearComplexityTest(random, clArgs);
             break;
 
+         case TestSelector.Serial:
+            DoSerialTest(random, clArgs);
+            break;
+
          default:
             break;
       }
@@ -272,6 +276,35 @@ public class Program
 
       Console.WriteLine($"Test Statistic: {testStatistic}");
       Console.WriteLine($"p-Value: {pValue}");
+      Console.WriteLine("Null hypothesis is {0}.", result ? "ACCEPTED" : "REJECTED");
+   }
+
+   private static void DoSerialTest(IRandom random, CommandLineArgs clArgs)
+   {
+      Console.WriteLine("Serial Test");
+      Console.WriteLine($"Significance: {clArgs.Significance}");
+      Console.WriteLine($"Block Size: {clArgs.BlockSize}");
+      Console.WriteLine($"Call Count: {clArgs.CallCount:N0}");
+
+      int blockSizeBefore = clArgs.BlockSize;
+      int blockSizeAfter = blockSizeBefore;
+      int callCountBefore = clArgs.CallCount;
+      int callCountAfter = callCountBefore;
+
+      double testStatistic1, pValue1;
+      double testStatistic2, pValue2;
+      bool result = Serial.Test(random, ref callCountAfter, ref blockSizeAfter,
+               clArgs.Significance, out testStatistic1, out pValue1, out testStatistic2,
+               out pValue2);
+
+      if (blockSizeAfter != blockSizeBefore)
+         Console.WriteLine($"Block Size was adjusted to {blockSizeAfter}");
+      if (callCountAfter != callCountBefore)
+         Console.WriteLine($"Call was adjusted to {callCountAfter:N0}");
+      Console.WriteLine($"Test Statistic #1: {testStatistic1}");
+      Console.WriteLine($"p-Value #1: {pValue1}");
+      Console.WriteLine($"Test Statistic #2: {testStatistic2}");
+      Console.WriteLine($"p-Value #2: {pValue2}");
       Console.WriteLine("Null hypothesis is {0}.", result ? "ACCEPTED" : "REJECTED");
    }
 }

@@ -139,6 +139,10 @@ public class CommandLineArgs
             ParseLinearComplexityTestArgs(args, ref argIndex, out _blockSize, out _blockCount, out _significance);
             break;
 
+         case TestSelector.Serial:
+            ParseSerialTestArgs(args, ref argIndex, out _callCount, out _blockSize, out _significance);
+            break;
+
          default:
             break;
       }
@@ -434,6 +438,36 @@ public class CommandLineArgs
       }
    }
 
+   private static void ParseSerialTestArgs(string[] args, ref int argIndex, out int callCount, out int blockSize, out double significance)
+   {
+      significance = DEFAULT_SIGNIFICANCE;
+      callCount = Serial.DEFAULT_CALL_COUNT;
+      blockSize = Serial.DEFAULT_BLOCK_SIZE;
+
+      while (argIndex < args.Length)
+      {
+         if (args[argIndex] == BLOCK_SIZE_SHORT || args[argIndex] == BLOCK_SIZE_LONG)
+         {
+            argIndex++;
+            blockSize = ParseIntegerArg(args[argIndex - 1], args, ref argIndex);
+         }
+         if (args[argIndex] == CALL_COUNT_SHORT || args[argIndex] == CALL_COUNT_LONG)
+         {
+            argIndex++;
+            callCount = ParseIntegerArg(args[argIndex - 1], args, ref argIndex);
+         }
+         if (args[argIndex] == SIGNIFICANCE_SHORT || args[argIndex] == SIGNIFICANCE_SHORT)
+         {
+            argIndex++;
+            significance = ParseDoubleArg(args[argIndex - 1], args, ref argIndex);
+         }
+         else
+         {
+            throw new ArgumentException($"Unknown argument: '{args[argIndex]}'");
+         }
+      }
+   }
+
    private static int ParseIntegerArg(string arg, string[] args, ref int argIndex)
    {
       if (argIndex >= args.Length)
@@ -511,6 +545,7 @@ public class CommandLineArgs
       tw.WriteLine("\toverlapping");
       tw.WriteLine("\tmaurer");
       tw.WriteLine("\tlinear");
+      tw.WriteLine("\tserial");
       tw.WriteLine();
 
       tw.WriteLine($"Uniform test arguments:");
@@ -623,6 +658,18 @@ public class CommandLineArgs
       tw.WriteLine("      Specifies the number of blocks to run the test on.");
       tw.WriteLine($"      This must be at least {LinearComplexity.MINIMUM_BLOCK_COUNT}");
       tw.WriteLine($"      If not specified, defaults to {LinearComplexity.MINIMUM_BLOCK_COUNT}");
+      tw.WriteLine();
+      PrintSignificanceHelp(tw);
+      tw.WriteLine();
+
+      tw.WriteLine("Serial Test");
+      tw.WriteLine($"   [{BLOCK_SIZE_SHORT} | {BLOCK_SIZE_LONG} M]");
+      tw.WriteLine($"      M must be a number between {Serial.MINIMUM_BLOCK_SIZE} and {Serial.MAXIMUM_BLOCK_SIZE}");
+      tw.WriteLine($"      If not specified, defaults to {Serial.DEFAULT_BLOCK_SIZE }");
+      tw.WriteLine();
+      tw.WriteLine($"   [{CALL_COUNT_SHORT} | {CALL_COUNT_LONG} CallCount]");
+      tw.WriteLine("      The number of times to call the Random Number Generator.");
+      tw.WriteLine($"      If not specified, defaults to {Serial.DEFAULT_CALL_COUNT:N0}");
       tw.WriteLine();
       PrintSignificanceHelp(tw);
       tw.WriteLine();

@@ -73,4 +73,9 @@ public enum TestSelector
    /// Specifies the Linear Complexity Test (Section 2.10 of Ref. A)
    /// </summary>
    Linear,
+
+   /// <summary>
+   /// Specifies the Serial Test (Section 2.11 of Ref. A)
+   /// </summary>
+   Serial,
 }
