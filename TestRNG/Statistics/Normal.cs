@@ -33,6 +33,14 @@ public static class Normal
    /// </summary>
    /// <param name="x"></param>
    /// <returns></returns>
+   /// <remarks>
+   /// <para>
+   /// In a separate project, I compared the accuracy of this method with
+   /// MathNet.Numerics.Distributions.Normal.CDF over a range from -6.0 to 6.0
+   /// (inclusive), in steps of 0.1.  The maximum discrepancy between the two
+   /// implementations was about 1.01E-9.
+   /// </para>
+   /// </remarks>
    public static double Gauss(double x)
    {
       double y;
