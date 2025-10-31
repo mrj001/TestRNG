@@ -78,4 +78,9 @@ public enum TestSelector
    /// Specifies the Serial Test (Section 2.11 of Ref. A)
    /// </summary>
    Serial,
+
+   /// <summary>
+   /// Specifies the Approximate Entropy Test (Section 2.12 of Ref. A)
+   /// </summary>
+   Entropy,
 }

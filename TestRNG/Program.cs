@@ -16,7 +16,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using TestRNG.RNG;
 using TestRNG.Statistics;
@@ -83,6 +82,10 @@ public class Program
 
          case TestSelector.Serial:
             DoSerialTest(random, clArgs);
+            break;
+
+         case TestSelector.Entropy:
+            DoApproximateEntropyTest(random, clArgs);
             break;
 
          default:
@@ -305,6 +308,27 @@ public class Program
       Console.WriteLine($"p-Value #1: {pValue1}");
       Console.WriteLine($"Test Statistic #2: {testStatistic2}");
       Console.WriteLine($"p-Value #2: {pValue2}");
+      Console.WriteLine("Null hypothesis is {0}.", result ? "ACCEPTED" : "REJECTED");
+   }
+
+   private static void DoApproximateEntropyTest(IRandom random, CommandLineArgs clArgs)
+   {
+      Console.WriteLine("Approximate Entropy Test");
+      Console.WriteLine($"Significance: {clArgs.Significance}");
+      Console.WriteLine($"Block Size: {clArgs.BlockSize}");
+      Console.WriteLine($"Call Count: {clArgs.CallCount:N0}");
+
+      int callCountBefore = clArgs.CallCount;
+      int callCountAfter = callCountBefore;
+
+      double testStatistic, pValue;
+      bool result = ApproximateEntropy.Test(random, ref callCountAfter, clArgs.BlockSize,
+               clArgs.Significance, out testStatistic, out pValue);
+
+      if (callCountAfter != callCountBefore)
+         Console.WriteLine($"Call was adjusted to {callCountAfter:N0}");
+      Console.WriteLine($"Test Statistic: {testStatistic}");
+      Console.WriteLine($"p-Value: {pValue}");
       Console.WriteLine("Null hypothesis is {0}.", result ? "ACCEPTED" : "REJECTED");
    }
 }

@@ -32,3 +32,30 @@ https://www.danielsoper.com/statcalc/calculator.aspx?id=23
 
 Note that these values match the p-Values given in Section 2.11.6 for the small example.
 
+## Setcion 2.12
+### Section 2.12.4(5) Step 4
+The arguments to the log functions are replaced by the correct values divided by 10.  If you do the addition 
+with the correct log arguments, you get the answer given.
+
+### Section 2.12.4(6)
+This shows
+```
+&Chi;<sup>2</sup> = 2 * 10 * (0.693147 - 0.190954) = 0.502193
+```
+However, the calculation is incorrect as 
+```
+0.693147 - 0.190954 = 0.502193
+```
+
+The full expression is equal to:
+```
+&Chi;<sup>2</sup> = 2 * 10 * (0.693147 - 0.190954) = 10.04386
+```
+
+In code, I've used the value 10.043859, which was arrived at by evaluating the above expression without
+intermediate rounding to 6 decimal places.  This allowed retaining the tolerance of 10<sup>-6</sup>.
+
+### Section 2.12.4(7)
+The incorrect value for the test statistic is shown as an argument to the igamc funcdtion.  However,
+the resulting p-Value is actually the one for the corrected test statistic.
+
