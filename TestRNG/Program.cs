@@ -88,6 +88,10 @@ public class Program
             DoApproximateEntropyTest(random, clArgs);
             break;
 
+         case TestSelector.Cusum:
+            DoCusumTest(random, clArgs);
+            break;
+
          default:
             break;
       }
@@ -327,6 +331,22 @@ public class Program
 
       if (callCountAfter != callCountBefore)
          Console.WriteLine($"Call was adjusted to {callCountAfter:N0}");
+      Console.WriteLine($"Test Statistic: {testStatistic}");
+      Console.WriteLine($"p-Value: {pValue}");
+      Console.WriteLine("Null hypothesis is {0}.", result ? "ACCEPTED" : "REJECTED");
+   }
+
+   private static void DoCusumTest(IRandom random, CommandLineArgs clArgs)
+   {
+      Console.WriteLine("Cumulative Sums (Cusum) Test");
+      Console.WriteLine($"Significance: {clArgs.Significance}");
+      Console.WriteLine($"Call Count: {clArgs.CallCount:N0}");
+      Console.WriteLine($"Mode: {clArgs.CumulativeSumsMode}");
+
+      double testStatistic;
+      double pValue;
+      bool result = CumulativeSums.Test(random, clArgs.CallCount, clArgs.CumulativeSumsMode, clArgs.Significance, out testStatistic, out pValue);
+
       Console.WriteLine($"Test Statistic: {testStatistic}");
       Console.WriteLine($"p-Value: {pValue}");
       Console.WriteLine("Null hypothesis is {0}.", result ? "ACCEPTED" : "REJECTED");

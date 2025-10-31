@@ -83,4 +83,9 @@ public enum TestSelector
    /// Specifies the Approximate Entropy Test (Section 2.12 of Ref. A)
    /// </summary>
    Entropy,
+
+   /// <summary>
+   /// Specifies the Cumulative Sums (Cusum) Test (Section 2.13 of Ref. A)
+   /// </summary>
+   Cusum,
 }

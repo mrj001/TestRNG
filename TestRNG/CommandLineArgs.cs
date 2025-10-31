@@ -60,6 +60,10 @@ public class CommandLineArgs
    private const int MATRIX_SIZE_DEFAULT = 32;
    private readonly int _matrixSize = 0;
 
+   private const string CUMULATIVE_SUMS_MODE_SHORT = "-m";
+   private const string CUMULATIVE_SUMS_MODE_LONG = "--mode";
+   private CumulativeSums.Mode _mode = CumulativeSums.Mode.Forward;
+
    private const LongestRunBlockSize BLOCK_SIZE_LONGEST_RUNS_DEFAULT = LongestRunBlockSize.Small;
    private LongestRunBlockSize _longestRunsBlockSize = BLOCK_SIZE_LONGEST_RUNS_DEFAULT;
 
@@ -145,6 +149,10 @@ public class CommandLineArgs
 
          case TestSelector.Entropy:
             ParseApproximateEntropyTestArgs(args, ref argIndex, out _callCount, out _blockSize, out _significance);
+            break;
+
+         case TestSelector.Cusum:
+            ParseCusumTestArgs(args, ref argIndex, out _callCount, out _mode, out _significance);
             break;
 
          default:
@@ -502,6 +510,37 @@ public class CommandLineArgs
       }
    }
 
+   private static void ParseCusumTestArgs(string[] args, ref int argIndex, out int callCount, out CumulativeSums.Mode mode, out double significance)
+   {
+      significance = DEFAULT_SIGNIFICANCE;
+      callCount = CumulativeSums.DEFAULT_CALL_COUNT;
+      mode = CumulativeSums.Mode.Forward;
+
+      while (argIndex < args.Length)
+      {
+         if (args[argIndex] == CALL_COUNT_SHORT || args[argIndex] == CALL_COUNT_LONG)
+         {
+            argIndex++;
+            callCount = ParseIntegerArg(args[argIndex - 1], args, ref argIndex);
+         }
+         if (args[argIndex] == CUMULATIVE_SUMS_MODE_SHORT || args[argIndex] == CUMULATIVE_SUMS_MODE_LONG)
+         {
+            argIndex++;
+            mode = Enum.Parse<CumulativeSums.Mode>(args[argIndex], true);
+            argIndex++;
+         }
+         if (args[argIndex] == SIGNIFICANCE_SHORT || args[argIndex] == SIGNIFICANCE_LONG)
+         {
+            argIndex++;
+            significance = ParseDoubleArg(args[argIndex - 1], args, ref argIndex);
+         }
+         else
+         {
+            throw new ArgumentException($"Unknown argument: '{args[argIndex]}'");
+         }
+      }
+   }
+
    private static int ParseIntegerArg(string arg, string[] args, ref int argIndex)
    {
       if (argIndex >= args.Length)
@@ -580,6 +619,7 @@ public class CommandLineArgs
       tw.WriteLine("\tmaurer");
       tw.WriteLine("\tlinear");
       tw.WriteLine("\tserial");
+      tw.WriteLine("\tcusum");
       tw.WriteLine();
 
       tw.WriteLine($"Uniform test arguments:");
@@ -719,6 +759,18 @@ public class CommandLineArgs
       tw.WriteLine();
       PrintSignificanceHelp(tw);
       tw.WriteLine();
+
+      tw.WriteLine("Cumulative Sums (Cusum) Test");
+      tw.WriteLine($"   [{CALL_COUNT_SHORT} | {CALL_COUNT_LONG} CallCount]");
+      tw.WriteLine("      The number of times to call the Random Number Generator.");
+      tw.WriteLine($"      If not specified, defaults to {CumulativeSums.DEFAULT_CALL_COUNT:N0}");
+      tw.WriteLine();
+      tw.WriteLine($"      [{CUMULATIVE_SUMS_MODE_SHORT} | {CUMULATIVE_SUMS_MODE_LONG} mode]");
+      tw.WriteLine("      mode must be one of forward or backwared.");
+      tw.WriteLine($"      If not specified, defaults to {CumulativeSums.Mode.Forward}");
+      tw.WriteLine();
+      PrintSignificanceHelp(tw);
+      tw.WriteLine();
    }
 
    private static void PrintCallCountHelp(TextWriter tw)
@@ -754,4 +806,6 @@ public class CommandLineArgs
    public int BlockCount { get => _blockCount; }
    
    public int MatrixSize { get => _matrixSize; }
+
+   public CumulativeSums.Mode CumulativeSumsMode { get => _mode; }
 }

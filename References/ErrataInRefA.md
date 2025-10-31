@@ -59,3 +59,16 @@ intermediate rounding to 6 decimal places.  This allowed retaining the tolerance
 The incorrect value for the test statistic is shown as an argument to the igamc funcdtion.  However,
 the resulting p-Value is actually the one for the corrected test statistic.
 
+## Section 2.13.4(4)
+No guidance is given as to how to round off the limits of the summations.  Math.Floor and Math.Ceiling seem
+most likely.  However, Math.Round might be plausible too.  After searching online, and finding this:
+https://github.com/GINARTeam/NIST-statistical-test/blob/master/13_cumulative_sums_test.py
+Math.Floor is chosen.
+
+## Section 2.13.4(3)
+The test statistic is given as the maximum of the absolute values of the sums.  However, this is inconsistent
+with Section 3.13, which divides it by the square root of n.
+
+Additionally, it is inconsistent with the example in Section 2.13.8 which does divide the maximum value by the 
+square root of n.
+
