@@ -88,4 +88,9 @@ public enum TestSelector
    /// Specifies the Cumulative Sums (Cusum) Test (Section 2.13 of Ref. A)
    /// </summary>
    Cusum,
+
+   /// <summary>
+   /// Specifies the Random Excursions Test (Section 2.14 of Ref. A)
+   /// </summary>
+   Excursions,
 }

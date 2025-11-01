@@ -72,3 +72,9 @@ with Section 3.13, which divides it by the square root of n.
 Additionally, it is inconsistent with the example in Section 2.13.8 which does divide the maximum value by the 
 square root of n.
 
+## Section 2.14.4 (3) & (4)
+There is a discrepancy in the counting of the sequence positions.  In the figure, the x-axis is drawn 
+zero-based.  In the text, the indices are listed as zero-based indices.
+
+In the list of zeroes of S' ("positions 3, 5, and 12") - for some reason the final appended zero is listed,
+but the initial prepended zero is not  (Position 1).

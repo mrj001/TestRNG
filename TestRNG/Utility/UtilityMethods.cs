@@ -24,7 +24,7 @@ public static class UtilityMethods
    /// <summary>
    /// 
    /// </summary>
-   /// <param name="formattedValues">First index is the column; second index is the row.  The first row contains the headers.</param>
+   /// <param name="formattedValues">First index is the row; second index is the column.  The first row contains the headers.</param>
    public static void PrintTable(string[,] formattedValues)
    {
       string colSeparator = " | ";

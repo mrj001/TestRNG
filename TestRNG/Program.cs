@@ -92,6 +92,10 @@ public class Program
             DoCusumTest(random, clArgs);
             break;
 
+         case TestSelector.Excursions:
+            DoRandomExcursionsTest(random, clArgs);
+            break;
+
          default:
             break;
       }
@@ -350,5 +354,41 @@ public class Program
       Console.WriteLine($"Test Statistic: {testStatistic}");
       Console.WriteLine($"p-Value: {pValue}");
       Console.WriteLine("Null hypothesis is {0}.", result ? "ACCEPTED" : "REJECTED");
+   }
+
+   private static void DoRandomExcursionsTest(IRandom random, CommandLineArgs clArgs)
+   {
+      Console.WriteLine("Random Excursions Test");
+      Console.WriteLine($"Significance: {clArgs.Significance}");
+      Console.WriteLine($"Call Count: {clArgs.CallCount:N0}");
+
+      double pValue;
+      double[]? testStatistics;
+      double[]? pValues;
+      bool result = RandomExcursions.Test(random, clArgs.CallCount, clArgs.Significance, out testStatistics, out pValues, out pValue);
+
+      Console.WriteLine($"Combined p-Value: {pValue}");
+      Console.WriteLine("Overall Null Hypothesis is {0}.", result ? "ACCEPTED" : "REJECTED");
+
+      if (testStatistics is not null)
+      {
+         string[,] table = new string[9, 4];
+         table[0, 0] = "State";
+         table[0, 1] = "Chi Squared";
+         table[0, 2] = "P-Value";
+         table[0, 3] = "Conclusion";
+         int stateIndex = 0;
+         for (int x = -4; x <= 4; x++)
+         {
+            // skip zero
+            if (x == 0)
+               continue;
+
+            table[stateIndex + 1, 0] = x.ToString();
+            table[stateIndex + 1, 1] = testStatistics[stateIndex].ToString("0.000000");
+            table[stateIndex + 1, 2] = pValues![stateIndex].ToString("0.000000");
+            table[stateIndex + 1, 3] = pValues[stateIndex] >= clArgs.Significance ? "Random" : "Non-Random";
+         }
+      }
    }
 }
