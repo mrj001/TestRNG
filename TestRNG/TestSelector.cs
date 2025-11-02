@@ -93,4 +93,9 @@ public enum TestSelector
    /// Specifies the Random Excursions Test (Section 2.14 of Ref. A)
    /// </summary>
    Excursions,
+
+   /// <summary>
+   /// Specifies the Random Excursions Variant Test (Section 2.15 of Ref. A)
+   /// </summary>
+   ExcursionsVariant
 }

@@ -159,6 +159,10 @@ public class CommandLineArgs
             ParseRandomExcursionsTestArgs(args, ref argIndex, out _callCount, out _significance);
             break;
 
+         case TestSelector.ExcursionsVariant:
+            ParseRandomExcursionsVariantTestArgs(args, ref argIndex, out _callCount, out _significance);
+            break;
+
          default:
             break;
       }
@@ -569,6 +573,30 @@ public class CommandLineArgs
       }
    }
 
+   private static void ParseRandomExcursionsVariantTestArgs(string[] args, ref int argIndex, out int callCount, out double significance)
+   {
+      significance = DEFAULT_SIGNIFICANCE;
+      callCount = CumulativeSums.DEFAULT_CALL_COUNT;
+
+      while (argIndex < args.Length)
+      {
+         if (args[argIndex] == CALL_COUNT_SHORT || args[argIndex] == CALL_COUNT_LONG)
+         {
+            argIndex++;
+            callCount = ParseIntegerArg(args[argIndex - 1], args, ref argIndex);
+         }
+         if (args[argIndex] == SIGNIFICANCE_SHORT || args[argIndex] == SIGNIFICANCE_LONG)
+         {
+            argIndex++;
+            significance = ParseDoubleArg(args[argIndex - 1], args, ref argIndex);
+         }
+         else
+         {
+            throw new ArgumentException($"Unknown argument: '{args[argIndex]}'");
+         }
+      }
+   }
+
    private static int ParseIntegerArg(string arg, string[] args, ref int argIndex)
    {
       if (argIndex >= args.Length)
@@ -649,6 +677,7 @@ public class CommandLineArgs
       tw.WriteLine("\tserial");
       tw.WriteLine("\tcusum");
       tw.WriteLine("\texcursions");
+      tw.WriteLine("\texcursionsvariant");
       tw.WriteLine();
 
       tw.WriteLine($"Uniform test arguments:");
@@ -805,6 +834,14 @@ public class CommandLineArgs
       tw.WriteLine($"   [{CALL_COUNT_SHORT} | {CALL_COUNT_LONG} CallCount]");
       tw.WriteLine("      The number of times to call the Random Number Generator.");
       tw.WriteLine($"      If not specified, defaults to {RandomExcursions.DEFAULT_CALL_COUNT:N0}");
+      tw.WriteLine();
+      PrintSignificanceHelp(tw);
+      tw.WriteLine();
+
+      tw.WriteLine("Random Excursions Variant Test");
+      tw.WriteLine($"   [{CALL_COUNT_SHORT} | {CALL_COUNT_LONG} CallCount]");
+      tw.WriteLine("      The number of times to call the Random Number Generator.");
+      tw.WriteLine($"      If not specified, defaults to {RandomExcursionsVariant.DEFAULT_CALL_COUNT:N0}");
       tw.WriteLine();
       PrintSignificanceHelp(tw);
       tw.WriteLine();

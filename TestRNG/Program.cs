@@ -96,6 +96,10 @@ public class Program
             DoRandomExcursionsTest(random, clArgs);
             break;
 
+         case TestSelector.ExcursionsVariant:
+            DoRandomExcursionsVariantTest(random, clArgs);
+            break;
+
          default:
             break;
       }
@@ -397,6 +401,46 @@ public class Program
       else
       {
          Console.WriteLine("There were too few cycles to complete the test.");
+      }
+   }
+
+   private static void DoRandomExcursionsVariantTest(IRandom random, CommandLineArgs clArgs)
+   {
+      Console.WriteLine("Random Excursions Test");
+      Console.WriteLine($"Significance: {clArgs.Significance}");
+      Console.WriteLine($"Call Count: {clArgs.CallCount:N0}");
+
+      double pValue;
+      double[]? testStatistics;
+      double[]? pValues;
+      bool result = RandomExcursionsVariant.Test(random, clArgs.CallCount, clArgs.Significance, out testStatistics, out pValues, out pValue);
+
+      Console.WriteLine($"Combined p-Value: {pValue}");
+      Console.WriteLine("Overall Null Hypothesis is {0}.", result ? "ACCEPTED" : "REJECTED");
+
+      if (testStatistics is not null)
+      {
+         string[,] table = new string[19, 4];
+         table[0, 0] = "State";
+         table[0, 1] = "Counts";
+         table[0, 2] = "P-Value";
+         table[0, 3] = "Conclusion";
+         int stateIndex = 0;
+         for (int x = -9; x <= 9; x++)
+         {
+            // skip zero
+            if (x == 0)
+               continue;
+
+            table[stateIndex + 1, 0] = x.ToString();
+            table[stateIndex + 1, 1] = testStatistics[stateIndex].ToString("N0");
+            table[stateIndex + 1, 2] = pValues![stateIndex].ToString("0.000000");
+            table[stateIndex + 1, 3] = pValues[stateIndex] >= clArgs.Significance ? "Random" : "Non-Random";
+
+            stateIndex++;
+         }
+
+         UtilityMethods.PrintTable(table);
       }
    }
 }
