@@ -8,8 +8,33 @@ know of such, please file an issue to let me know.
 It's also possible that some of these are, in fact, my errors.  If so, please file an issue with an 
 explanation.
 
+## The Million Bits of e
+Several of the tests use the first million bits of the binary expansion of e.  I was unable to find
+a version of this that I could download.  To be confident of its accuracy, I generated it two ways.
+First, I used a spigot algorithm (see `TestTestRNG/Utility/GenerateTestFiles.cs`).  Secondly, I 
+did a conversion from a decimal representation found on the [NASA website](https://apod.nasa.gov/htmltest/gifcity/e.1mil).
+These two versions were the same.
+
+Additionally, some tests based on the million bits of e agreed perfectly with the NIST document.
+This lends some confidence that where there are discrepancies it is either my code or the NIST
+document, rather than the million bits of e used.
+
+## Section 2.8.8
+The values for v<sub>0</sub> and v<sub>1</sub> should be 330 and 164.  I confirmed these counts
+using [an independent implementation](https://github.com/dj-on-github/sp800_22_tests), 
+after tweaking the values at the top of the `overlapping_template_matching_test` method in
+file `sp800_22_overlapping_template_matching_test.py`.
+
+Also, I was unable to reproduce the &Chi;<sup>2</sup>(obs) and P-Values given.  See the file
+`RecalculateSection2.10.8.ods` for the detailed calculations.
+
+| Value | NIST Value | Corrected Value |
+|:------|:-----------|:----------------|
+| &Chi;<sup>2</sup>(obs) | 8.965859 | 7.999866 |
+| P-value | 0.110434 | 0.156243 |
+
 ## Section 2.10.8
-See the file RecalculateSecttion2.10.8.ods for the detailed calculations.
+See the file RecalculateSection2.10.8.ods for the detailed calculations.
 
 | Value | NIST Value | Corrected Value |
 |:------|:-----------|:----------------|
@@ -32,7 +57,7 @@ https://www.danielsoper.com/statcalc/calculator.aspx?id=23
 
 Note that these values match the p-Values given in Section 2.11.6 for the small example.
 
-## Setcion 2.12
+## Section 2.12
 ### Section 2.12.4(5) Step 4
 The arguments to the log functions are replaced by the correct values divided by 10.  If you do the addition 
 with the correct log arguments, you get the answer given.

@@ -43,9 +43,13 @@ public class TestOverlapping
       double actualTestStatistic;
       double actualPValue;
       IRandom random = new FakeRandomFile("TestFiles/MillionBitsOfE.gz");
-      int[] expectedV = new int[] { 329, 164, 150, 111, 78, 136 };
-      double expectedTestStatistic = 8.965859;
-      double expectedPValue = 0.110434;
+
+      // See the errata file and RecalculateSection2.8.8.ods for the differences
+      // compared to Section 2.8.8 of Ref. A
+      int[] expectedV = new int[] { 330, 163, 150, 111, 78, 136 };
+      double expectedTestStatistic = 7.999866;
+      double expectedPValue = 0.156243;
+
       double tolerance = 1E-6;
 
       //
