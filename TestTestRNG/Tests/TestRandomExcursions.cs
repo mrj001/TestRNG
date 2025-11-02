@@ -61,8 +61,9 @@ public class TestRandomExcursions
       double[]? testStatistics;
       double[]? pValues;
       double pValue;
-      double[] expectedTestStatistics = new double[] { 3.835698, 7.318707, 7.861927, 15.692617, 2.485906, 5.429381, 2.404171, 2.393928 };
-      double[] expectedPValues = new double[] { 0.573306, 0.197996, 0.164011, 0.007779, 0.778616, 0.365752, 0.790853, 0.792378 };
+      // See errata on Section 2.14.8 regarding these two being different from Ref. A.
+      double[] expectedTestStatistics = new double[] { 3.810488, 7.314571, 7.841437, 15.692617, 2.430872, 4.824346, 2.387421, 2.529995 };
+      double[] expectedPValues = new double[] { 0.577011, 0.198277, 0.165194, 0.007779, 0.786868, 0.437691, 0.793346, 0.771971 };
       bool[] expectedConclusion = new bool[] { true, true, true, false, true, true, true, true };
       double tolerance = 1e-6;
 

@@ -78,3 +78,12 @@ zero-based.  In the text, the indices are listed as zero-based indices.
 
 In the list of zeroes of S' ("positions 3, 5, and 12") - for some reason the final appended zero is listed,
 but the initial prepended zero is not  (Position 1).
+
+## Section 2.14.8
+The listed test statistics and p-Values appear to be somewhat inaccurate.  I found an independent implementation
+in Python, and fed it the 1,000,000 bits of e test data.
+https://github.com/dj-on-github/sp800_22_tests
+
+After reviewing the code, and finding it to be a faithful implementation of the described test, and tweaking a 
+couple probabilities (I had added a trailing 5 digit to two entries.), it produced exactly the same results as
+my implementation.
