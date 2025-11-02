@@ -388,7 +388,15 @@ public class Program
             table[stateIndex + 1, 1] = testStatistics[stateIndex].ToString("0.000000");
             table[stateIndex + 1, 2] = pValues![stateIndex].ToString("0.000000");
             table[stateIndex + 1, 3] = pValues[stateIndex] >= clArgs.Significance ? "Random" : "Non-Random";
+
+            stateIndex++;
          }
+
+         UtilityMethods.PrintTable(table);
+      }
+      else
+      {
+         Console.WriteLine("There were too few cycles to complete the test.");
       }
    }
 }
