@@ -16,6 +16,7 @@
 
 using System;
 using System.ComponentModel;
+using System.ComponentModel.Design;
 using System.IO;
 using TestRNG.Tests;
 
@@ -664,20 +665,9 @@ public class CommandLineArgs
       tw.WriteLine("\t\tIf this option is not given, no output file is created.");
       tw.WriteLine();
       tw.WriteLine("TestName is one of");
-      tw.WriteLine("\tuniform");
-      tw.WriteLine("\tmonobit");
-      tw.WriteLine("\tfrequencyblock");
-      tw.WriteLine("\truns");
-      tw.WriteLine("\tlongestrun");
-      tw.WriteLine("\tmatrixrank");
-      tw.WriteLine("\tnonoverlapping");
-      tw.WriteLine("\toverlapping");
-      tw.WriteLine("\tmaurer");
-      tw.WriteLine("\tlinear");
-      tw.WriteLine("\tserial");
-      tw.WriteLine("\tcusum");
-      tw.WriteLine("\texcursions");
-      tw.WriteLine("\texcursionsvariant");
+
+      foreach (TestSelector ts in Enum.GetValues<TestSelector>())
+         tw.WriteLine($"\t{ts.ToString().ToLower()}");
       tw.WriteLine();
 
       tw.WriteLine($"Uniform test arguments:");
