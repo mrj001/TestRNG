@@ -24,6 +24,7 @@ Next, I'm going to go back and run each of the tests numerous times, and evaluat
 | Runs | 1,000 | PASS | PASS |
 | Longest Run Of Ones | 1,000 | PASS | PASS |
 | Binary Matrix Rank | 1,000 | PASS | PASS |
+| Spectral | 1,000 | PASS | FAIL |
 
 ## Monobit test
 ```
@@ -149,3 +150,52 @@ $ ./TestRNG -r 1000 matrixrank -ms 32 -c 1000000 -s 0.01
 >Uniformity p-Value: 0.028817
 >p-Values are uniformly distributed.
 
+## Spectral Test
+```
+$ ./TestRNG -r 1000 spectral -c 1000 -s 0.01
+```
+>Spectral Test
+>Call Count: 1,000
+>Significance: 0.01
+>Call Count was adjusted to 1,024
+>RESULTS:
+>Acceptable proportion of passing sequences is from 0.980561 to 0.999439
+>Observed proportion: 0.988000
+>Result: Pass
+>
+>Checking histogram for uniformity:
+>Chi-Squared: 407.380000
+>Uniformity p-Value: 0.000000
+>p-Values are NOT uniformly distributed
+
+```
+$ ./TestRNG -r 1000 spectral -c 2048 -s 0.01
+```
+>Spectral Test
+>Call Count: 2,048
+>Significance: 0.01
+>RESULTS:
+>Acceptable proportion of passing sequences is from 0.980561 to 0.999439
+>Observed proportion: 0.989000
+>Result: Pass
+>
+>Checking histogram for uniformity:
+>Chi-Squared: 104.480000
+>Uniformity p-Value: 0.000000
+>p-Values are NOT uniformly distributed
+
+```
+$ ./TestRNG -r 1000 spectral -c 4096 -s 0.01
+```
+>Spectral Test
+>Call Count: 4,096
+>Significance: 0.01
+>RESULTS:
+>Acceptable proportion of passing sequences is from 0.980561 to 0.999439
+>Observed proportion: 0.990000
+>Result: Pass
+>
+>Checking histogram for uniformity:
+>Chi-Squared: 23.520000
+>Uniformity p-Value: 0.005128
+>p-Values are uniformly distributed.
