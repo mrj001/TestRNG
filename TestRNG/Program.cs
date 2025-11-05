@@ -396,12 +396,27 @@ public class Program
       Console.WriteLine($"Significance: {clArgs.Significance}");
       Console.WriteLine($"Block Size: 2**{clArgs.BlockSize}");
 
-      double testStatistic, pValue;
-      bool result = Maurer.Test(random, clArgs.BlockSize, clArgs.Significance, out testStatistic, out pValue);
+      if (clArgs.RepeatCount == 1)
+      {
+         double testStatistic, pValue;
+         bool result = Maurer.Test(random, clArgs.BlockSize, clArgs.Significance, out testStatistic, out pValue);
 
-      Console.WriteLine($"Test Statistic: {testStatistic}");
-      Console.WriteLine($"p-Value: {pValue}");
-      Console.WriteLine("Null hypothesis is {0}.", result ? "ACCEPTED" : "REJECTED");
+         Console.WriteLine($"Test Statistic: {testStatistic}");
+         Console.WriteLine($"p-Value: {pValue}");
+         Console.WriteLine("Null hypothesis is {0}.", result ? "ACCEPTED" : "REJECTED");
+      }
+      else
+      {
+         double[] testStatistics = new double[clArgs.RepeatCount];
+         double[] pValues = new double[clArgs.RepeatCount];
+         bool[] results = new bool[clArgs.RepeatCount];
+
+         for (int j = 0; j < clArgs.RepeatCount; j ++)
+            results[j] = Maurer.Test(random, clArgs.BlockSize, clArgs.Significance, out testStatistics[j], out pValues[j]);
+
+         Combining.CombinePassingResults(Console.Out, results, clArgs.Significance);
+         Combining.CheckHistogramOfPValues(Console.Out, pValues, clArgs.Significance);
+      }
    }
 
    private static void DoLinearComplexityTest(IRandom random, CommandLineArgs clArgs)

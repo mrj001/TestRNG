@@ -17,16 +17,17 @@ I've informally run each test a bunch of times, without really tracking results 
 
 Next, I'm going to go back and run each of the tests numerous times, and evaluate the results per Sections 4.2.1 and 4.2.2 of Reference A (that's the aforementioned NIST Special Publication :-)).
 
-| Test | Repeat Count | Proportion of Passing | Uniformity of pValues |
-|:-----|:-------------|:----------------------|:----------------------|
-| Monobit | 1,000 | PASS | PASS |
-| FrequencyBlock | 1,000 | PASS | PASS |
-| Runs | 1,000 | PASS | PASS |
-| Longest Run Of Ones | 1,000 | PASS | PASS |
-| Binary Matrix Rank | 1,000 | PASS | PASS |
-| Spectral | 1,000 | PASS | FAIL |
-| Non-overlapping Template | TODO | | |
-| Overlapping Template | 1,000 | PASS | PASS |
+| NIST | Test | Repeat Count | Proportion of Passing | Uniformity of pValues |
+|:-----|:-----|:-------------|:----------------------|:----------------------|
+| 2.1 | Monobit | 1,000 | PASS | PASS |
+| 2.2 | FrequencyBlock | 1,000 | PASS | PASS |
+| 2.3 | Runs | 1,000 | PASS | PASS |
+| 2.4 | Longest Run Of Ones | 1,000 | PASS | PASS |
+| 2.5 | Binary Matrix Rank | 1,000 | PASS | PASS |
+| 2.6 | Spectral | 1,000 | PASS | FAIL |
+| 2.7 | Non-overlapping Template | TODO | | |
+| 2.8 | Overlapping Template | 1,000 | PASS | PASS |
+| 2.9 | Maurer's "Universal Statistical" | 1,000 | FAIL | FAIL |
 
 ## Monobit test
 ```
@@ -221,4 +222,26 @@ $ ./TestRNG -r 1000 overlapping -s 0.01
 >Uniformity p-Value: 0.260930
 >p-Values are uniformly distributed.
 
+## Maurer's "Universal Statistical" Test
+```
+$ ./TestRNG -r 1000 maurer -bs 6 -s 0.01
+```
+>Maurer's "Universal Statistical" Test
+>Significance: 0.01
+>Block Size: 2**6
+>RESULTS:
+>Acceptable proportion of passing sequences is from 0.980561 to 0.999439
+>Observed proportion: 1.000000
+>Result: FailTooHigh
+>
+>Checking histogram for uniformity:
+>Chi-Squared: 9000.000000
+>Uniformity p-Value: 0.000000
+>p-Values are NOT uniformly distributed
 
+Other tests were run, increasing the block size parameter by one up to 12.  All of these tests failed similarly.  The following was
+run 5 times:
+```
+$ ./TestRNG maurer -bs 10 -s 0.01
+```
+In no run, was a p-Value below 0.999 observed.
