@@ -16,3 +16,21 @@ Global References are called out by letters, and listed in the file References/S
 I've informally run each test a bunch of times, without really tracking results or how many times.  However, my impression is that the System.Random implementation in .NET 8 is a really good PRNG.  I did notice one test (without tracking which one) where the p-Values were all suspiciously very high.
 
 Next, I'm going to go back and run each of the tests numerous times, and evaluate the results per Sections 4.2.1 and 4.2.2 of Reference A (that's the aforementioned NIST Special Publication :-)).
+
+## Monobit test
+```
+$ ./TestRNG -r 1000 monobit -c 1000000 -s 0.01
+```
+>Running Monobit test
+>Call Count: 1,000,000
+>Significance: 0.01
+>Repeat Count: 1,000
+>RESULTS:
+>Acceptable proportion of passing sequences is at least: 0.980561
+>Observed proportion: 0.988000
+>ACCEPT>
+
+>Checking histogram for uniformity:
+>Chi-Squared: 8.940000
+>Uniformity p-Value: 0.442831
+>p-Values are uniformly distributed.

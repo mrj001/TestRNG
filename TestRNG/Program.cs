@@ -17,6 +17,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using TestRNG.RNG;
 using TestRNG.Statistics;
 using TestRNG.Tests;
@@ -125,13 +126,62 @@ public class Program
       Console.WriteLine("Running Monobit test");
       Console.WriteLine($"Call Count: {args.CallCount:N0}");
       Console.WriteLine($"Significance: {args.Significance}");
+      if (args.RepeatCount > 1)
+         Console.WriteLine($"Repeat Count: {args.RepeatCount:N0}");
 
-      double testStatistic, pValue;
-      bool result = MonobitTest.Test(random, args.CallCount, args.Significance, out testStatistic, out pValue);
+      if (args.RepeatCount == 1)
+      {
+         double testStatistic, pValue;
+         bool result = MonobitTest.Test(random, args.CallCount, args.Significance, out testStatistic, out pValue);
 
-      Console.WriteLine($"Test Statistic: {testStatistic}");
-      Console.WriteLine($"p-Value: {pValue}");
-      Console.WriteLine("Null hypothesis is {0}.", result ? "ACCEPTED" : "REJECTED");
+         Console.WriteLine($"Test Statistic: {testStatistic}");
+         Console.WriteLine($"p-Value: {pValue}");
+         Console.WriteLine("Null hypothesis is {0}.", result ? "ACCEPTED" : "REJECTED");
+      }
+      else
+      {
+         double[] testStatistic = new double[args.RepeatCount];
+         double[] pValue = new double[args.RepeatCount];
+         bool[] results = new bool[args.RepeatCount];
+         double sucessCount = 0.0;
+         for (int j = 0; j < args.RepeatCount; j++)
+         {
+            results[j] = MonobitTest.Test(random, args.CallCount, args.Significance, out testStatistic[j], out pValue[j]);
+            if (results[j])
+               sucessCount += 1.0;
+         }
+
+         double p = 1.0 - args.Significance;
+         p = p - 3.0 * Math.Sqrt(p * (1 - p) / args.RepeatCount);
+         double observedProportion = sucessCount / args.RepeatCount;
+         Console.WriteLine("RESULTS:");
+         Console.WriteLine($"Acceptable proportion of passing sequences is at least: {p:0.000000}");
+         Console.WriteLine($"Observed proportion: {observedProportion:0.000000}");
+         Console.WriteLine(observedProportion > p ? "ACCEPT" : "REJECT");
+         Console.WriteLine();
+         Console.WriteLine("Checking histogram for uniformity:");
+         int binCount = 10;
+         int[] histogram = new int[binCount];
+         for (int j = 0; j < args.RepeatCount; j++)
+         {
+            int bin = (int)Math.Floor(pValue[j] * binCount);
+            histogram[bin]++;
+         }
+         double chiSquared = 0.0;
+         for (int j = 0; j < binCount; j++)
+         {
+            double expected = ((double)args.RepeatCount) / binCount;
+            double t = (histogram[j] - expected);
+            chiSquared += t * t / expected;
+         }
+         double uniformityPValue = Gamma.IncompleteGammaQ((binCount - 1.0) / 2.0, chiSquared / 2.0);
+         Console.WriteLine($"Chi-Squared: {chiSquared:0.000000}");
+         Console.WriteLine($"Uniformity p-Value: {uniformityPValue:0.000000}");
+         if (uniformityPValue > 0.0001)
+            Console.WriteLine("p-Values are uniformly distributed.");
+         else
+            Console.WriteLine("p-Values are NOT uniformly distributed");
+      }
    }
 
    private static void DoFrequencyBlockTest(IRandom random, CommandLineArgs clArgs)

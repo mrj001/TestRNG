@@ -27,6 +27,11 @@ public class CommandLineArgs
    private readonly string? _outputFileName = null;
    private readonly TestSelector _selectedTest;
 
+   private const string REPEAT_COUNT_SHORT = "-r";
+   private const string REPEAT_COUNT_LONG = "--repeat";
+   private const int DEFAULT_REPEAT_COUNT = 1;
+   private readonly int _repeatCount = DEFAULT_REPEAT_COUNT;
+
    private const string BIN_COUNT_SHORT = "-b";
    private const string BIN_COUNT_LONG = "--bins";
    private const int DEFAULT_BIN_COUNT = 2;
@@ -76,15 +81,7 @@ public class CommandLineArgs
 
       int argIndex = 0;
 
-      // Parse optional output file name
-      if (args[argIndex] == "-o")
-      {
-         argIndex++;
-         if (args.Length == argIndex)
-            throw new ArgumentException("Missing output file name");
-         _outputFileName = args[argIndex];
-         argIndex++;
-      }
+      ParsePreambleArgs(args, ref argIndex, out _outputFileName, out _repeatCount);
 
       // Parse the test name
       try
@@ -166,6 +163,31 @@ public class CommandLineArgs
 
          default:
             break;
+      }
+   }
+
+   private static void ParsePreambleArgs(string[] args, ref int argIndex, out string? outputfilename, out int repeatCount)
+   {
+      repeatCount = DEFAULT_REPEAT_COUNT;
+      outputfilename = null;
+
+      // TODO: Don't impose an order upon the entry of these arguments.
+
+      // Parse optional output file name
+      if (args[argIndex] == "-o")
+      {
+         argIndex++;
+         if (args.Length == argIndex)
+            throw new ArgumentException("Missing output file name");
+         outputfilename = args[argIndex];
+         argIndex++;
+      }
+
+      // Parse optional repeat count
+      if (args[argIndex] == REPEAT_COUNT_SHORT || args[argIndex] == REPEAT_COUNT_LONG)
+      {
+         argIndex++;
+         repeatCount = ParseIntegerArg(args[argIndex - 1], args, ref argIndex);
       }
    }
 
@@ -629,24 +651,27 @@ public class CommandLineArgs
    public static CommandLineArgs? ParseCommandLineArgs(string[] args, TextWriter? tw)
    {
       // Check for help request
-      if (args.Length > 0 && (args[0] == "-h" || args[0] == "--help"))
+      if (args.Length > 0)
       {
-         // Check for help request for specific test.
-         if (args.Length > 1)
+         if (args[0] == "-h" || args[0] == "--help")
          {
-            object? test;
-            if (Enum.TryParse(typeof(TestSelector), args[1], true, out test))
-               PrintUsage(tw ?? Console.Error, (TestSelector)test);
-            else if (args[1].ToLower() == "all")
-               PrintUsage(tw ?? Console.Error);
+            // Check for help request for specific test.
+            if (args.Length > 1)
+            {
+               object? test;
+               if (Enum.TryParse(typeof(TestSelector), args[1], true, out test))
+                  PrintUsage(tw ?? Console.Error, (TestSelector)test);
+               else if (args[1].ToLower() == "all")
+                  PrintUsage(tw ?? Console.Error);
+               else
+                  PrintUsage(tw ?? Console.Error, $"'{args[1]}' is not a recognized test name.");
+            }
             else
-               PrintUsage(tw ?? Console.Error, $"'{args[1]}' is not a recognized test name.");
+            {
+               PrintUsage(tw ?? Console.Error, null);
+            }
+            return null;
          }
-         else
-         {
-            PrintUsage(tw ?? Console.Error, null);
-         }
-         return null;
       }
 
       try
@@ -676,10 +701,14 @@ public class CommandLineArgs
       tw.WriteLine("TestRNG {-h | --help} {TestName | all}");
       tw.WriteLine("\tPrints a help message for a specific test or for all tests.");
       tw.WriteLine();
-      tw.WriteLine("TestRNG [-o outputfilename] TestName {Test-specific args}");
+      tw.WriteLine($"TestRNG [-o outputfilename] [{REPEAT_COUNT_SHORT} | {REPEAT_COUNT_LONG} RepeatCount] TestName {{Test-specific args}}");
       tw.WriteLine("\t-o specifies the name of a results file to be created.");
       tw.WriteLine("\t\tIf this file exists, it will be overwritten.");
       tw.WriteLine("\t\tIf this option is not given, no output file is created.");
+      tw.WriteLine();
+      tw.WriteLine($"[{REPEAT_COUNT_SHORT} | {REPEAT_COUNT_LONG} RepeatCount]");
+      tw.WriteLine($"      Specifies the number of times to repeat a test.");
+      tw.WriteLine($"      If not specified, defaults to {DEFAULT_REPEAT_COUNT}");
       tw.WriteLine();
       tw.WriteLine("TestName is one of");
 
@@ -691,10 +720,14 @@ public class CommandLineArgs
    private static void PrintUsage(TextWriter tw)
    {
       tw.WriteLine("Usage:");
-      tw.WriteLine("TestRNG [-o outputfilename] TestName {Test-specific args}");
+      tw.WriteLine($"TestRNG [-o outputfilename] [{REPEAT_COUNT_SHORT} | {REPEAT_COUNT_LONG} RepeatCount] TestName {{Test-specific args}}");
       tw.WriteLine("\t-o specifies the name of a results file to be created.");
       tw.WriteLine("\t\tIf this file exists, it will be overwritten.");
       tw.WriteLine("\t\tIf this option is not given, no output file is created.");
+      tw.WriteLine();
+      tw.WriteLine($"[{REPEAT_COUNT_SHORT} | {REPEAT_COUNT_LONG} RepeatCount]");
+      tw.WriteLine($"      Specifies the number of times to repeat a test.");
+      tw.WriteLine($"      If not specified, defaults to {DEFAULT_REPEAT_COUNT}");
       tw.WriteLine();
 
       foreach (TestSelector ts in Enum.GetValues<TestSelector>())
@@ -704,10 +737,14 @@ public class CommandLineArgs
    private static void PrintUsage(TextWriter tw, TestSelector test)
    {
       tw.WriteLine("Usage:");
-      tw.WriteLine("TestRNG [-o outputfilename] {0} {{Test-specific args}}", test);
+      tw.WriteLine($"TestRNG [-o outputfilename] [{REPEAT_COUNT_SHORT} | {REPEAT_COUNT_LONG} RepeatCount] TestName {{Test-specific args}}");
       tw.WriteLine("\t-o specifies the name of a results file to be created.");
       tw.WriteLine("\t\tIf this file exists, it will be overwritten.");
       tw.WriteLine("\t\tIf this option is not given, no output file is created.");
+      tw.WriteLine();
+      tw.WriteLine($"[{REPEAT_COUNT_SHORT} | {REPEAT_COUNT_LONG} RepeatCount]");
+      tw.WriteLine($"      Specifies the number of times to repeat a test.");
+      tw.WriteLine($"      If not specified, defaults to {DEFAULT_REPEAT_COUNT}");
       tw.WriteLine();
 
       PrintSpecificTestHelp(tw, test);
@@ -1041,4 +1078,9 @@ public class CommandLineArgs
    public int MatrixSize { get => _matrixSize; }
 
    public CumulativeSums.Mode CumulativeSumsMode { get => _mode; }
+
+   /// <summary>
+   /// Gets the user-specified number of times to repeat a test.
+   /// </summary>
+   public int RepeatCount { get => _repeatCount; }
 }
