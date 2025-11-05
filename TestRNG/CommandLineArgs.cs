@@ -631,7 +631,21 @@ public class CommandLineArgs
       // Check for help request
       if (args.Length > 0 && (args[0] == "-h" || args[0] == "--help"))
       {
-         PrintUsage(tw ?? Console.Error, null);
+         // Check for help request for specific test.
+         if (args.Length > 1)
+         {
+            object? test;
+            if (Enum.TryParse(typeof(TestSelector), args[1], true, out test))
+               PrintUsage(tw ?? Console.Error, (TestSelector)test);
+            else if (args[1].ToLower() == "all")
+               PrintUsage(tw ?? Console.Error);
+            else
+               PrintUsage(tw ?? Console.Error, $"'{args[1]}' is not a recognized test name.");
+         }
+         else
+         {
+            PrintUsage(tw ?? Console.Error, null);
+         }
          return null;
       }
 
@@ -659,6 +673,9 @@ public class CommandLineArgs
       tw.WriteLine("TestRNG -h | --help");
       tw.WriteLine("\tPrints this help message and exits.");
       tw.WriteLine();
+      tw.WriteLine("TestRNG {-h | --help} {TestName | all}");
+      tw.WriteLine("\tPrints a help message for a specific test or for all tests.");
+      tw.WriteLine();
       tw.WriteLine("TestRNG [-o outputfilename] TestName {Test-specific args}");
       tw.WriteLine("\t-o specifies the name of a results file to be created.");
       tw.WriteLine("\t\tIf this file exists, it will be overwritten.");
@@ -669,7 +686,108 @@ public class CommandLineArgs
       foreach (TestSelector ts in Enum.GetValues<TestSelector>())
          tw.WriteLine($"\t{ts.ToString().ToLower()}");
       tw.WriteLine();
+   }
 
+   private static void PrintUsage(TextWriter tw)
+   {
+      tw.WriteLine("Usage:");
+      tw.WriteLine("TestRNG [-o outputfilename] TestName {Test-specific args}");
+      tw.WriteLine("\t-o specifies the name of a results file to be created.");
+      tw.WriteLine("\t\tIf this file exists, it will be overwritten.");
+      tw.WriteLine("\t\tIf this option is not given, no output file is created.");
+      tw.WriteLine();
+
+      foreach (TestSelector ts in Enum.GetValues<TestSelector>())
+         PrintSpecificTestHelp(tw, ts);
+   }
+
+   private static void PrintUsage(TextWriter tw, TestSelector test)
+   {
+      tw.WriteLine("Usage:");
+      tw.WriteLine("TestRNG [-o outputfilename] {0} {{Test-specific args}}", test);
+      tw.WriteLine("\t-o specifies the name of a results file to be created.");
+      tw.WriteLine("\t\tIf this file exists, it will be overwritten.");
+      tw.WriteLine("\t\tIf this option is not given, no output file is created.");
+      tw.WriteLine();
+
+      PrintSpecificTestHelp(tw, test);
+   }
+
+   private static void PrintSpecificTestHelp(TextWriter tw, TestSelector test)
+   {
+      switch (test)
+      {
+         case TestSelector.Uniform:
+            PrintUniformTestHelp(tw);
+            break;
+
+         case TestSelector.Monobit:
+            PrintMonobitTestHelp(tw);
+            break;
+
+         case TestSelector.FrequencyBlock:
+            PrintFrequencyBlockTestHelp(tw);
+            break;
+
+         case TestSelector.Runs:
+            PrintRunsTestHelp(tw);
+            break;
+
+         case TestSelector.LongestRun:
+            PrintLongestRunTestHelp(tw);
+            break;
+
+         case TestSelector.MatrixRank:
+            PrintBinaryMatrixRankTestHelp(tw);
+            break;
+
+         case TestSelector.Spectral:
+            PrintSpectralTestHelp(tw);
+            break;
+
+         case TestSelector.NonOverlapping:
+            PrintNonoverlappingTestHelp(tw);
+            break;
+
+         case TestSelector.Overlapping:
+            PrintOverlappingTestHelp(tw);
+            break;
+
+         case TestSelector.Maurer:
+            PrintMaurerTestHelp(tw);
+            break;
+
+         case TestSelector.Linear:
+            PrintLinearComplexityTestHelp(tw);
+            break;
+
+         case TestSelector.Serial:
+            PrintSerialTestHelp(tw);
+            break;
+
+         case TestSelector.Entropy:
+            PrintEntropyTestHelp(tw);
+            break;
+
+         case TestSelector.Cusum:
+            PrintCumulativeSumsTestHelp(tw);
+            break;
+
+         case TestSelector.Excursions:
+            PrintRandomExcursionsTestHelp(tw);
+            break;
+
+         case TestSelector.ExcursionsVariant:
+            PrintRandomExcursionsVariantTestHelp(tw);
+            break;
+
+         default:
+            break;
+      }
+   }
+   
+   private static void PrintUniformTestHelp(TextWriter tw)
+   {
       tw.WriteLine($"Uniform test arguments:");
       tw.WriteLine($"   [{BIN_COUNT_SHORT} | {BIN_COUNT_LONG} BinCount]");
       tw.WriteLine("      BinCount must be at least 2.");
@@ -684,7 +802,19 @@ public class CommandLineArgs
       tw.WriteLine();
       PrintSignificanceHelp(tw);
       tw.WriteLine();
+   }
 
+   private static void PrintMonobitTestHelp(TextWriter tw)
+   {
+      tw.WriteLine("Frequency (Monobit) Test");
+      PrintCallCountHelp(tw);
+      tw.WriteLine();
+      PrintSignificanceHelp(tw);
+      tw.WriteLine();
+   }
+
+   private static void PrintFrequencyBlockTestHelp(TextWriter tw)
+   {
       tw.WriteLine("Frequency Block Test arguments:");
       tw.WriteLine($"   [{BLOCK_SIZE_SHORT} | {BLOCK_SIZE_LONG}]");
       tw.WriteLine("      Specifies the number of bits in a block.");
@@ -696,7 +826,10 @@ public class CommandLineArgs
       tw.WriteLine();
       PrintSignificanceHelp(tw);
       tw.WriteLine();
+   }
 
+   private static void PrintRunsTestHelp(TextWriter tw)
+   {
       tw.WriteLine("Runs Test arguments:");
       tw.WriteLine($"   [{CALL_COUNT_SHORT} | {CALL_COUNT_LONG}]");
       tw.WriteLine("      Specifies the number of times to call the Random Number Generator.");
@@ -704,7 +837,10 @@ public class CommandLineArgs
       tw.WriteLine();
       PrintSignificanceHelp(tw);
       tw.WriteLine();
+   }
 
+   private static void PrintLongestRunTestHelp(TextWriter tw)
+   {
       tw.WriteLine("Longest Run of Ones in a Block Test arguments:");
       tw.WriteLine($"   [{BLOCK_SIZE_SHORT} | {BLOCK_SIZE_LONG} Small | Medium | Large]");
       tw.WriteLine("      Specifies the number of bits in a block.");
@@ -719,7 +855,10 @@ public class CommandLineArgs
       tw.WriteLine();
       PrintSignificanceHelp(tw);
       tw.WriteLine();
+   }
 
+   private static void PrintBinaryMatrixRankTestHelp(TextWriter tw)
+   {
       tw.WriteLine("Binary Matrix Rank test arguments:");
       tw.WriteLine($"   [{MATRIX_SIZE_SHORT} | {MATRIX_SIZE_LONG}]");
       tw.WriteLine("      Specifies the number of rows and columns in a square matrix.");
@@ -734,7 +873,10 @@ public class CommandLineArgs
       tw.WriteLine();
       PrintSignificanceHelp(tw);
       tw.WriteLine();
+   }
 
+   private static void PrintSpectralTestHelp(TextWriter tw)
+   {
       tw.WriteLine("Spectral Test Arguments:");
       tw.WriteLine($"   [{CALL_COUNT_SHORT} | {CALL_COUNT_LONG} CallCount]");
       tw.WriteLine("      The number of times to call the Random Number Generator.");
@@ -744,7 +886,10 @@ public class CommandLineArgs
       tw.WriteLine();
       PrintSignificanceHelp(tw);
       tw.WriteLine();
+   }
 
+   private static void PrintNonoverlappingTestHelp(TextWriter tw)
+   {
       tw.WriteLine("Non-overlapping Template Matching Test Arguments:");
       tw.WriteLine($"   [{CALL_COUNT_SHORT} | {CALL_COUNT_LONG} CallCount]");
       tw.WriteLine("      The number of times to call the Random Number Generator.");
@@ -754,14 +899,20 @@ public class CommandLineArgs
       tw.WriteLine();
       PrintSignificanceHelp(tw);
       tw.WriteLine();
+   }
 
+   private static void PrintOverlappingTestHelp(TextWriter tw)
+   {
       tw.WriteLine("Overlapping Template Matching Test Arguments:");
       tw.WriteLine("   The code uses a 9-bit run of ones as the template, with 968 blocks");
       tw.WriteLine("   of length 1032 bits with 5 degrees of freedom.");
       tw.WriteLine();
       PrintSignificanceHelp(tw);
       tw.WriteLine();
+   }
 
+   private static void PrintMaurerTestHelp(TextWriter tw)
+   {
       tw.WriteLine("Maurer's \"Universal Statistical\" Test");
       tw.WriteLine($"   [{BLOCK_SIZE_SHORT} | {BLOCK_SIZE_LONG} L]");
       tw.WriteLine($"      L will be a number between {Maurer.BLOCK_SIZE_MIN} and {Maurer.BLOCK_SIZE_MAX}");
@@ -770,7 +921,10 @@ public class CommandLineArgs
       tw.WriteLine();
       PrintSignificanceHelp(tw);
       tw.WriteLine();
+   }
 
+   private static void PrintLinearComplexityTestHelp(TextWriter tw)
+   {
       tw.WriteLine("Linear Complexity Test");
       tw.WriteLine($"   [{BLOCK_SIZE_SHORT} | {BLOCK_SIZE_LONG} M]");
       tw.WriteLine($"      M must be a number between {LinearComplexity.MINIMUM_BLOCK_SIZE} and {LinearComplexity.MAXIMUM_BLOCK_SIZE}");
@@ -783,7 +937,10 @@ public class CommandLineArgs
       tw.WriteLine();
       PrintSignificanceHelp(tw);
       tw.WriteLine();
+   }
 
+   private static void PrintSerialTestHelp(TextWriter tw)
+   {
       tw.WriteLine("Serial Test");
       tw.WriteLine($"   [{BLOCK_SIZE_SHORT} | {BLOCK_SIZE_LONG} M]");
       tw.WriteLine($"      M must be a number between {Serial.MINIMUM_BLOCK_SIZE} and {Serial.MAXIMUM_BLOCK_SIZE}");
@@ -795,7 +952,10 @@ public class CommandLineArgs
       tw.WriteLine();
       PrintSignificanceHelp(tw);
       tw.WriteLine();
+   }
 
+   private static void PrintEntropyTestHelp(TextWriter tw)
+   {
       tw.WriteLine("Approximate Entropy Test");
       tw.WriteLine($"   [{BLOCK_SIZE_SHORT} | {BLOCK_SIZE_LONG} M]");
       tw.WriteLine($"      M must be a number between {ApproximateEntropy.MINIMUM_BLOCK_SIZE} and {ApproximateEntropy.MAXIMUM_BLOCK_SIZE}");
@@ -807,7 +967,10 @@ public class CommandLineArgs
       tw.WriteLine();
       PrintSignificanceHelp(tw);
       tw.WriteLine();
+   }
 
+   private static void PrintCumulativeSumsTestHelp(TextWriter tw)
+   {
       tw.WriteLine("Cumulative Sums (Cusum) Test");
       tw.WriteLine($"   [{CALL_COUNT_SHORT} | {CALL_COUNT_LONG} CallCount]");
       tw.WriteLine("      The number of times to call the Random Number Generator.");
@@ -819,7 +982,10 @@ public class CommandLineArgs
       tw.WriteLine();
       PrintSignificanceHelp(tw);
       tw.WriteLine();
+   }
 
+   private static void PrintRandomExcursionsTestHelp(TextWriter tw)
+   {
       tw.WriteLine("Random Excursions Test");
       tw.WriteLine($"   [{CALL_COUNT_SHORT} | {CALL_COUNT_LONG} CallCount]");
       tw.WriteLine("      The number of times to call the Random Number Generator.");
@@ -827,7 +993,10 @@ public class CommandLineArgs
       tw.WriteLine();
       PrintSignificanceHelp(tw);
       tw.WriteLine();
+   }
 
+   private static void PrintRandomExcursionsVariantTestHelp(TextWriter tw)
+   {
       tw.WriteLine("Random Excursions Variant Test");
       tw.WriteLine($"   [{CALL_COUNT_SHORT} | {CALL_COUNT_LONG} CallCount]");
       tw.WriteLine("      The number of times to call the Random Number Generator.");
