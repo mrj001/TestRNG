@@ -22,6 +22,7 @@ Next, I'm going to go back and run each of the tests numerous times, and evaluat
 | Monobit | 1,000 | PASS | PASS |
 | FrequencyBlock | 1,000 | PASS | PASS |
 | Runs | 1,000 | PASS | PASS |
+| Longest Run Of Ones | 1,000 | PASS | PASS |
 
 ## Monobit test
 ```
@@ -73,4 +74,56 @@ $ ./TestRNG -r 1000 runs -c 1000000 -s 0.01
 >Checking histogram for uniformity:
 >Chi-Squared: 7.660000
 >Uniformity p-Value: 0.568739
+>p-Values are uniformly distributed.
+
+## Longest Run of Ones Test
+```
+$ ./TestRNG -r 1000 longestrun -bs Small -c 1000000 -s 0.01
+```
+>Running Longest Run of Ones Test
+>Block Size: Small
+>Call Count: 1,000,000
+>Significance: 0.01
+>RESULTS:
+>Acceptable proportion of passing sequences is from 0.980561 to 0.999439
+>Observed proportion: 0.992000
+>Result: Pass
+>
+>Checking histogram for uniformity:
+>Chi-Squared: 2.300000
+>Uniformity p-Value: 0.985788
+>p-Values are uniformly distributed.
+
+```
+$ ./TestRNG -r 1000 longestrun -bs Medium -c 1000000 -s 0.01
+```
+>Running Longest Run of Ones Test
+>Block Size: Medium
+>Call Count: 1,000,000
+>Significance: 0.01
+>RESULTS:
+>Acceptable proportion of passing sequences is from 0.980561 to 0.999439
+>Observed proportion: 0.991000
+>Result: Pass
+>
+>Checking histogram for uniformity:
+>Chi-Squared: 7.680000
+>Uniformity p-Value: 0.566688
+>p-Values are uniformly distributed.
+
+```
+$ ./TestRNG -r 1000 longestrun -bs Large -c 1000000 -s 0.01
+```
+>Running Longest Run of Ones Test
+>Block Size: Large
+>Call Count: 1,000,000
+>Significance: 0.01
+>RESULTS:
+>Acceptable proportion of passing sequences is from 0.980561 to 0.999439
+>Observed proportion: 0.989000
+>Result: Pass
+>
+>Checking histogram for uniformity:
+>Chi-Squared: 5.280000
+>Uniformity p-Value: 0.809249
 >p-Values are uniformly distributed.

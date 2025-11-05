@@ -214,16 +214,36 @@ public class Program
       Console.WriteLine($"Call Count: {clArgs.CallCount:N0}");
       Console.WriteLine($"Significance: {clArgs.Significance}");
 
-      double testStatistic, pValue;
-      int callCountBefore = clArgs.CallCount;
-      int callCountAfter = callCountBefore;
-      bool result = LongestRun.Test(random, clArgs.LongestRunBlockSize, ref callCountAfter, clArgs.Significance, out testStatistic, out pValue);
+      if (clArgs.RepeatCount == 1)
+      {
+         double testStatistic, pValue;
+         int callCountBefore = clArgs.CallCount;
+         int callCountAfter = callCountBefore;
+         bool result = LongestRun.Test(random, clArgs.LongestRunBlockSize, ref callCountAfter, clArgs.Significance, out testStatistic, out pValue);
 
-      if (callCountBefore != callCountAfter)
-         Console.WriteLine($"Call Count was adjusted to {callCountAfter:N0}");
-      Console.WriteLine($"Test Statistic: {testStatistic}");
-      Console.WriteLine($"p-Value: {pValue}");
-      Console.WriteLine("Null hypothesis is {0}.", result ? "ACCEPTED" : "REJECTED");
+         if (callCountBefore != callCountAfter)
+            Console.WriteLine($"Call Count was adjusted to {callCountAfter:N0}");
+         Console.WriteLine($"Test Statistic: {testStatistic}");
+         Console.WriteLine($"p-Value: {pValue}");
+         Console.WriteLine("Null hypothesis is {0}.", result ? "ACCEPTED" : "REJECTED");
+      }
+      else
+      {
+         double[] testStatistics = new double[clArgs.RepeatCount];
+         double[] pValues = new double[clArgs.RepeatCount];
+         bool[] results = new bool[clArgs.RepeatCount];
+         int callCountBefore = clArgs.CallCount;
+         int callCountAfter = callCountBefore;
+
+         for (int j = 0; j < clArgs.RepeatCount; j ++)
+            results[j] = LongestRun.Test(random, clArgs.LongestRunBlockSize, ref callCountAfter, clArgs.Significance, out testStatistics[j], out pValues[j]);
+
+         if (callCountBefore != callCountAfter)
+            Console.WriteLine($"Call Count was adjusted to {callCountAfter:N0}");
+
+         Combining.CombinePassingResults(Console.Out, results, clArgs.Significance);
+         Combining.CheckHistogramOfPValues(Console.Out, pValues, clArgs.Significance);
+      }
    }
 
    private static void DoBinaryMatrixRankTest(IRandom random, CommandLineArgs clArgs)
