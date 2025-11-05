@@ -141,43 +141,29 @@ public class Program
       else
       {
          double[] testStatistic = new double[args.RepeatCount];
-         double[] pValue = new double[args.RepeatCount];
+         double[] pValues = new double[args.RepeatCount];
          bool[] results = new bool[args.RepeatCount];
-         double sucessCount = 0.0;
          for (int j = 0; j < args.RepeatCount; j++)
-         {
-            results[j] = MonobitTest.Test(random, args.CallCount, args.Significance, out testStatistic[j], out pValue[j]);
-            if (results[j])
-               sucessCount += 1.0;
-         }
+            results[j] = MonobitTest.Test(random, args.CallCount, args.Significance, out testStatistic[j], out pValues[j]);
 
-         double p = 1.0 - args.Significance;
-         p = p - 3.0 * Math.Sqrt(p * (1 - p) / args.RepeatCount);
-         double observedProportion = sucessCount / args.RepeatCount;
+         double minAcceptable;
+         double maxAcceptable;
+         double observedProportion;
          Console.WriteLine("RESULTS:");
-         Console.WriteLine($"Acceptable proportion of passing sequences is at least: {p:0.000000}");
+         Combining.PassingProportionResult proportionResult = Combining.PassingProportion(results,
+                  args.Significance, out minAcceptable, out maxAcceptable, out observedProportion);
+         Console.WriteLine($"Acceptable proportion of passing sequences is from {minAcceptable:0.000000} to {maxAcceptable:0.000000}");
          Console.WriteLine($"Observed proportion: {observedProportion:0.000000}");
-         Console.WriteLine(observedProportion > p ? "ACCEPT" : "REJECT");
+         Console.WriteLine($"Result: {proportionResult}");
          Console.WriteLine();
+
          Console.WriteLine("Checking histogram for uniformity:");
-         int binCount = 10;
-         int[] histogram = new int[binCount];
-         for (int j = 0; j < args.RepeatCount; j++)
-         {
-            int bin = (int)Math.Floor(pValue[j] * binCount);
-            histogram[bin]++;
-         }
-         double chiSquared = 0.0;
-         for (int j = 0; j < binCount; j++)
-         {
-            double expected = ((double)args.RepeatCount) / binCount;
-            double t = (histogram[j] - expected);
-            chiSquared += t * t / expected;
-         }
-         double uniformityPValue = Gamma.IncompleteGammaQ((binCount - 1.0) / 2.0, chiSquared / 2.0);
+         double chiSquared;
+         double uniformityPValue;
+         bool uniformityResult = Combining.HistogramUniformity(pValues, args.Significance, out chiSquared, out uniformityPValue);
          Console.WriteLine($"Chi-Squared: {chiSquared:0.000000}");
          Console.WriteLine($"Uniformity p-Value: {uniformityPValue:0.000000}");
-         if (uniformityPValue > 0.0001)
+         if (uniformityResult)
             Console.WriteLine("p-Values are uniformly distributed.");
          else
             Console.WriteLine("p-Values are NOT uniformly distributed");
