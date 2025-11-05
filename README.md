@@ -21,6 +21,7 @@ Next, I'm going to go back and run each of the tests numerous times, and evaluat
 |:-----|:-------------|:----------------------|:----------------------|
 | Monobit | 1,000 | PASS | PASS |
 | FrequencyBlock | 1,000 | PASS | PASS |
+| Runs | 1,000 | PASS | PASS |
 
 ## Monobit test
 ```
@@ -57,3 +58,19 @@ $ ./TestRNG -r 1000 frequencyblock -bs 31 -bc 1000 -s 0.01
 >Uniformity p-Value: 0.081510
 >p-Values are uniformly distributed.
 
+## Runs Test
+```
+$ ./TestRNG -r 1000 runs -c 1000000 -s 0.01
+```
+>Running Runs Test
+>Call Count: 1,000,000
+>Significance: 0.01
+>RESULTS:
+>Acceptable proportion of passing sequences is from 0.980561 to 0.999439
+>Observed proportion: 0.986000
+>Result: Pass
+>
+>Checking histogram for uniformity:
+>Chi-Squared: 7.660000
+>Uniformity p-Value: 0.568739
+>p-Values are uniformly distributed.
