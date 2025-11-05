@@ -18,6 +18,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata;
+using System.Security.Claims;
 using TestRNG.RNG;
 using TestRNG.Statistics;
 using TestRNG.Tests;
@@ -253,20 +254,44 @@ public class Program
       Console.WriteLine($"Call Count: {clArgs.CallCount:N0}");
       Console.WriteLine($"Significance: {clArgs.Significance}");
 
-      double testStatistic, pValue;
-      int callCountBefore = clArgs.CallCount;
-      int callCountAfter = callCountBefore;
-      int unusedBitCount;
-      bool result = BinaryMatrixRank.Test(random, clArgs.MatrixSize, ref callCountAfter, clArgs.Significance, out testStatistic, out pValue, out unusedBitCount);
+      if (clArgs.RepeatCount == 1)
+      {
+         double testStatistic, pValue;
+         int callCountBefore = clArgs.CallCount;
+         int callCountAfter = callCountBefore;
+         int unusedBitCount;
+         bool result = BinaryMatrixRank.Test(random, clArgs.MatrixSize, ref callCountAfter, clArgs.Significance, out testStatistic, out pValue, out unusedBitCount);
 
-      int matrixCount = callCountAfter / (clArgs.MatrixSize * clArgs.MatrixSize);
-      Console.WriteLine($"Matrix Count: {matrixCount:N0}");
-      if (callCountBefore != callCountAfter)
-         Console.WriteLine($"Call Count was adjusted to {callCountAfter:N0}");
-      Console.WriteLine($"Unused Bit Count: {unusedBitCount:N0}");
-      Console.WriteLine($"Test Statistic: {testStatistic}");
-      Console.WriteLine($"p-Value: {pValue}");
-      Console.WriteLine("Null hypothesis is {0}.", result ? "ACCEPTED" : "REJECTED");
+         int matrixCount = callCountAfter / (clArgs.MatrixSize * clArgs.MatrixSize);
+         Console.WriteLine($"Matrix Count: {matrixCount:N0}");
+         if (callCountBefore != callCountAfter)
+            Console.WriteLine($"Call Count was adjusted to {callCountAfter:N0}");
+         Console.WriteLine($"Unused Bit Count: {unusedBitCount:N0}");
+         Console.WriteLine($"Test Statistic: {testStatistic}");
+         Console.WriteLine($"p-Value: {pValue}");
+         Console.WriteLine("Null hypothesis is {0}.", result ? "ACCEPTED" : "REJECTED");
+      }
+      else
+      {
+         double[] testStatistics = new double[clArgs.RepeatCount];
+         double[] pValues = new double[clArgs.RepeatCount];
+         bool[] results = new bool[clArgs.RepeatCount];
+         int callCountBefore = clArgs.CallCount;
+         int callCountAfter = callCountBefore;
+         int unusedBitCount = 0;
+
+         for (int j = 0; j < clArgs.RepeatCount; j ++)
+            results[j] = BinaryMatrixRank.Test(random, clArgs.MatrixSize, ref callCountAfter, clArgs.Significance, out testStatistics[j], out pValues[j], out unusedBitCount);
+
+         int matrixCount = callCountAfter / (clArgs.MatrixSize * clArgs.MatrixSize);
+         Console.WriteLine($"Matrix Count: {matrixCount:N0}");
+         if (callCountBefore != callCountAfter)
+            Console.WriteLine($"Call Count was adjusted to {callCountAfter:N0}");
+         Console.WriteLine($"Unused Bit Count: {unusedBitCount:N0}");
+
+         Combining.CombinePassingResults(Console.Out, results, clArgs.Significance);
+         Combining.CheckHistogramOfPValues(Console.Out, pValues, clArgs.Significance);
+      }
    }
 
    private static void DoSpectralTest(IRandom random, CommandLineArgs clArgs)

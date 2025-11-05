@@ -23,6 +23,7 @@ Next, I'm going to go back and run each of the tests numerous times, and evaluat
 | FrequencyBlock | 1,000 | PASS | PASS |
 | Runs | 1,000 | PASS | PASS |
 | Longest Run Of Ones | 1,000 | PASS | PASS |
+| Binary Matrix Rank | 1,000 | PASS | PASS |
 
 ## Monobit test
 ```
@@ -127,3 +128,24 @@ $ ./TestRNG -r 1000 longestrun -bs Large -c 1000000 -s 0.01
 >Chi-Squared: 5.280000
 >Uniformity p-Value: 0.809249
 >p-Values are uniformly distributed.
+
+## Binary Matrix Rank Test
+```
+$ ./TestRNG -r 1000 matrixrank -ms 32 -c 1000000 -s 0.01
+```
+>Binary Matrix Rank Test
+>Matrix Size: 32
+>Call Count: 1,000,000
+>Significance: 0.01
+>Matrix Count: 976
+>Unused Bit Count: 576
+>RESULTS:
+>Acceptable proportion of passing sequences is from 0.980561 to 0.999439
+>Observed proportion: 0.983000
+>Result: Pass
+>
+>Checking histogram for uniformity:
+>Chi-Squared: 18.600000
+>Uniformity p-Value: 0.028817
+>p-Values are uniformly distributed.
+
