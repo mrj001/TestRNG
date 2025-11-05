@@ -49,7 +49,7 @@ public static class Gamma
    /// <summary>
    /// Specifies the maximum number of iterations to use in the series representation.
    /// </summary>
-   private const int ITMAX = 100;
+   private const int ITMAX = 1_000;
 
    private const double EPS = 3E-7;
 
@@ -82,7 +82,7 @@ public static class Gamma
             if (Math.Abs(del) < Math.Abs(sum) * EPS)
                return sum * Math.Exp(-x + a * Math.Log(x) - gln);
          }
-         throw new ApplicationException($"{nameof(a)} too large, {nameof(ITMAX)} too small in routine {nameof(IncompleteGammaPBySeries)}");
+         throw new ApplicationException($"{nameof(a)} = {a} is too large or {nameof(ITMAX)} = {ITMAX} is too small in routine {nameof(IncompleteGammaPBySeries)}");
       }
    }
 
