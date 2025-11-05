@@ -17,6 +17,10 @@ I've informally run each test a bunch of times, without really tracking results 
 
 Next, I'm going to go back and run each of the tests numerous times, and evaluate the results per Sections 4.2.1 and 4.2.2 of Reference A (that's the aforementioned NIST Special Publication :-)).
 
+| Test | Repeat Count | Proportion of Passing | Uniformity of pValues |
+|:-----|:-------------|:----------------------|:----------------------|
+| Monobit | 1,000 | PASS | PASS |
+
 ## Monobit test
 ```
 $ ./TestRNG -r 1000 monobit -c 1000000 -s 0.01
@@ -26,11 +30,11 @@ $ ./TestRNG -r 1000 monobit -c 1000000 -s 0.01
 >Significance: 0.01
 >Repeat Count: 1,000
 >RESULTS:
->Acceptable proportion of passing sequences is at least: 0.980561
->Observed proportion: 0.988000
->ACCEPT>
+>Acceptable proportion of passing sequences is from 0.980561 to 0.999439
+>Observed proportion: 0.990000
+>Result: Pass>
 
 >Checking histogram for uniformity:
->Chi-Squared: 8.940000
->Uniformity p-Value: 0.442831
+>Chi-Squared: 7.100000
+>Uniformity p-Value: 0.626709
 >p-Values are uniformly distributed.
