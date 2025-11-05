@@ -15,6 +15,7 @@
 // TestRNGSln. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.IO;
 using System.Linq;
 
 namespace TestRNG.Statistics;
@@ -90,6 +91,27 @@ public static class Combining
    }
 
    /// <summary>
+   /// Convenience method that combines a typical call to PassingProportion with output
+   /// of the results.
+   /// </summary>
+   /// <param name="tw">A TextWriter to which output is sent.</param>
+   /// <param name="pass">A sequence of boolean values, one per test run, indicating whether each test run passed or failed.</param>
+   /// <param name="sigLevel">The significance level of the tests.</param>
+   public static void CombinePassingResults(TextWriter tw, bool[] pass, double sigLevel)
+   {
+      double minAcceptable;
+      double maxAcceptable;
+      double observedProportion;
+      tw.WriteLine("RESULTS:");
+      PassingProportionResult proportionResult = PassingProportion(pass,
+               sigLevel, out minAcceptable, out maxAcceptable, out observedProportion);
+      tw.WriteLine($"Acceptable proportion of passing sequences is from {minAcceptable:0.000000} to {maxAcceptable:0.000000}");
+      tw.WriteLine($"Observed proportion: {observedProportion:0.000000}");
+      tw.WriteLine($"Result: {proportionResult}");
+      tw.WriteLine();
+   }
+
+   /// <summary>
    /// This test checks for a uniform distribution of pValues resulting from 
    /// multiple runs of any given test.
    /// </summary>
@@ -133,4 +155,24 @@ public static class Combining
       return pValue >= 0.0001;
    }
 
+   /// <summary>
+   /// A convenience method that combines a typical call to HistogramUniformity with
+   /// output of the results.
+   /// </summary>
+   /// <param name="tw">A TextWriter to which output is sent.</param>
+   /// <param name="pValues">An array containing the pValues from many runs of a test.</param>
+   /// <param name="sigLevel">The significance level at which the tests were conducted.</param>
+   public static void CheckHistogramOfPValues(TextWriter tw, double[] pValues, double sigLevel)
+   {
+      tw.WriteLine("Checking histogram for uniformity:");
+      double chiSquared;
+      double uniformityPValue;
+      bool uniformityResult = HistogramUniformity(pValues, sigLevel, out chiSquared, out uniformityPValue);
+      tw.WriteLine($"Chi-Squared: {chiSquared:0.000000}");
+      tw.WriteLine($"Uniformity p-Value: {uniformityPValue:0.000000}");
+      if (uniformityResult)
+         tw.WriteLine("p-Values are uniformly distributed.");
+      else
+         tw.WriteLine("p-Values are NOT uniformly distributed");
+   }
 }

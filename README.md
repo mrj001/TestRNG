@@ -20,6 +20,7 @@ Next, I'm going to go back and run each of the tests numerous times, and evaluat
 | Test | Repeat Count | Proportion of Passing | Uniformity of pValues |
 |:-----|:-------------|:----------------------|:----------------------|
 | Monobit | 1,000 | PASS | PASS |
+| FrequencyBlock | 1,000 | PASS | PASS |
 
 ## Monobit test
 ```
@@ -38,3 +39,21 @@ $ ./TestRNG -r 1000 monobit -c 1000000 -s 0.01
 >Chi-Squared: 7.100000
 >Uniformity p-Value: 0.626709
 >p-Values are uniformly distributed.
+
+## Frequency Block Test
+```
+$ ./TestRNG -r 1000 frequencyblock -bs 31 -bc 1000 -s 0.01
+```
+>Running Frequency Block Test
+>Block Size: 31
+>Block Count: 1000
+>RESULTS:
+>Acceptable proportion of passing sequences is from 0.980561 to 0.999439
+>Observed proportion: 0.994000
+>Result: Pass
+>
+>Checking histogram for uniformity:
+>Chi-Squared: 15.360000
+>Uniformity p-Value: 0.081510
+>p-Values are uniformly distributed.
+

@@ -146,27 +146,8 @@ public class Program
          for (int j = 0; j < args.RepeatCount; j++)
             results[j] = MonobitTest.Test(random, args.CallCount, args.Significance, out testStatistic[j], out pValues[j]);
 
-         double minAcceptable;
-         double maxAcceptable;
-         double observedProportion;
-         Console.WriteLine("RESULTS:");
-         Combining.PassingProportionResult proportionResult = Combining.PassingProportion(results,
-                  args.Significance, out minAcceptable, out maxAcceptable, out observedProportion);
-         Console.WriteLine($"Acceptable proportion of passing sequences is from {minAcceptable:0.000000} to {maxAcceptable:0.000000}");
-         Console.WriteLine($"Observed proportion: {observedProportion:0.000000}");
-         Console.WriteLine($"Result: {proportionResult}");
-         Console.WriteLine();
-
-         Console.WriteLine("Checking histogram for uniformity:");
-         double chiSquared;
-         double uniformityPValue;
-         bool uniformityResult = Combining.HistogramUniformity(pValues, args.Significance, out chiSquared, out uniformityPValue);
-         Console.WriteLine($"Chi-Squared: {chiSquared:0.000000}");
-         Console.WriteLine($"Uniformity p-Value: {uniformityPValue:0.000000}");
-         if (uniformityResult)
-            Console.WriteLine("p-Values are uniformly distributed.");
-         else
-            Console.WriteLine("p-Values are NOT uniformly distributed");
+         Combining.CombinePassingResults(Console.Out, results, args.Significance);
+         Combining.CheckHistogramOfPValues(Console.Out, pValues, args.Significance);
       }
    }
 
@@ -176,12 +157,26 @@ public class Program
       Console.WriteLine($"Block Size: {clArgs.BlockSize}");
       Console.WriteLine($"Block Count: {clArgs.BlockCount}");
 
-      double testStatistic, pValue;
-      bool result = FrequencyBlock.Test(random, clArgs.BlockSize, clArgs.BlockCount, clArgs.Significance, out testStatistic, out pValue);
+      if (clArgs.RepeatCount == 1)
+      {
+         double testStatistic, pValue;
+         bool result = FrequencyBlock.Test(random, clArgs.BlockSize, clArgs.BlockCount, clArgs.Significance, out testStatistic, out pValue);
 
-      Console.WriteLine($"Test Statistic: {testStatistic}");
-      Console.WriteLine($"p-Value: {pValue}");
-      Console.WriteLine("Null hypothesis is {0}.", result ? "ACCEPTED" : "REJECTED");
+         Console.WriteLine($"Test Statistic: {testStatistic}");
+         Console.WriteLine($"p-Value: {pValue}");
+         Console.WriteLine("Null hypothesis is {0}.", result ? "ACCEPTED" : "REJECTED");
+      }
+      else
+      {
+         double[] testStatistic = new double[clArgs.RepeatCount];
+         double[] pValues = new double[clArgs.RepeatCount];
+         bool[] results = new bool[clArgs.RepeatCount];
+         for (int j = 0; j < clArgs.RepeatCount; j++)
+            results[j] = FrequencyBlock.Test(random, clArgs.BlockSize, clArgs.BlockCount, clArgs.Significance, out testStatistic[j], out pValues[j]);
+
+         Combining.CombinePassingResults(Console.Out, results, clArgs.Significance);
+         Combining.CheckHistogramOfPValues(Console.Out, pValues, clArgs.Significance);
+      }
    }
 
    private static void DoRunsTest(IRandom random, CommandLineArgs clArgs)
