@@ -25,6 +25,8 @@ Next, I'm going to go back and run each of the tests numerous times, and evaluat
 | Longest Run Of Ones | 1,000 | PASS | PASS |
 | Binary Matrix Rank | 1,000 | PASS | PASS |
 | Spectral | 1,000 | PASS | FAIL |
+| Non-overlapping Template | TODO | | |
+| Overlapping Template | 1,000 | PASS | PASS |
 
 ## Monobit test
 ```
@@ -199,3 +201,24 @@ $ ./TestRNG -r 1000 spectral -c 4096 -s 0.01
 >Chi-Squared: 23.520000
 >Uniformity p-Value: 0.005128
 >p-Values are uniformly distributed.
+
+## Non-overlapping Template Matching Test
+TODO
+
+## Overlapping Template Matching Test
+```
+$ ./TestRNG -r 1000 overlapping -s 0.01
+```
+>Overlapping Template Matching Test
+>Significance: 0.01
+>RESULTS:
+>Acceptable proportion of passing sequences is from 0.980561 to 0.999439
+>Observed proportion: 0.992000
+>Result: Pass
+>
+>Checking histogram for uniformity:
+>Chi-Squared: 11.220000
+>Uniformity p-Value: 0.260930
+>p-Values are uniformly distributed.
+
+
