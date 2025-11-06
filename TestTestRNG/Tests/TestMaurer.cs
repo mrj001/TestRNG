@@ -24,13 +24,14 @@ namespace TestTestRNG.Tests;
 
 public class TestMaurer
 {
+   // This test is based on the example in Section 2.9.4 of Ref. A
    [Fact]
    public void DoTest()
    {
       IRandom random = new FakeRandom("01011010011101010111");
       double actualTestStatistic;
-      double actualPValue; 
-      double expectedPValue = 0.767189;
+      double actualPValue;
+      double expectedPValue = 0.662374;   // See errata file.
       double expectedTestStatistic = 1.1949875;
       double tolerance = 1E-6;
       MethodInfo? mi = typeof(Maurer).GetMethod("TestInternal", BindingFlags.Static | BindingFlags.NonPublic);
@@ -60,5 +61,24 @@ public class TestMaurer
       Assert.True(actual.Value);
       Assert.True(Math.Abs(expectedTestStatistic - actualTestStatistic) < tolerance);
       Assert.True(Math.Abs(expectedPValue - actualPValue) < tolerance);
+   }
+
+   [Fact]
+   public void DoTest2()
+   {
+      IRandom random = new FakeRandomFile("TestFiles/MillionBitsOfE.gz");
+      double actualTestStatistic;
+      double actualPValue;
+
+      //
+      // Action
+      //
+      bool actual = Maurer.Test(random, 7, 0.01, out actualTestStatistic, out actualPValue);
+
+      //
+      // Assertions
+      //
+      Assert.True(actual);
+      Assert.True(actualPValue < 0.999);
    }
 }

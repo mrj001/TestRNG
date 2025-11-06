@@ -33,6 +33,31 @@ Also, I was unable to reproduce the &Chi;<sup>2</sup>(obs) and P-Values given.  
 | &Chi;<sup>2</sup>(obs) | 8.965859 | 7.999866 |
 | P-value | 0.110434 | 0.156243 |
 
+## Section 2.9.4(5)
+In this step, a formula is given for &sigma; as a function of the variance listed in the table.
+However, in the numerical example for L = 2, the value of the variance is directly inserted
+into the formula instead of calculating &sigma;.  An additional discrepancy is that the square root
+of this value is taken when the formula does not show &sigma; inside the square root (only the 2).
+
+I used 4 references (listed below) to conclude that this was an error.  Maurer's original paper 
+shows a formula for &sigma; which is very similar to that in this section of the NIST reference.
+References 2 & 3 both use the same formula as NIST.  It is presumed to be a more accurate approximation
+arrived at after the original Maurer paper.
+
+Python implementions (#2 & #3 below) both use the formula for &sigma; in calculating the test statistic.  
+The python implemention (#4 below) uses the variance from the table directly in the formula as in this NIST section.
+
+When I implemented this as per the numerical example, I found all practical sequences were producing p-Values
+in excess of 0.999.  When I implemented this per the formulae given, I find more reasonable values for
+the p-Values.  Accordingly, I chose to follow the formulae.
+
+1. Maurer, U.M. A universal statistical test for random bit generators. J. Cryptology 5, 89–105 (1992). 
+https://doi.org/10.1007/BF00193563
+2. https://github.com/alexandru-stancioiu/Maurer-s-Universal-Statistical-Test/blob/master/maurer.py
+3. https://github.com/dj-on-github/sp800_22_tests/blob/master/sp800_22_maurers_universal_test.py
+4. https://github.com/GINARTeam/NIST-statistical-test/blob/master/09_maurers_universal_test.py
+(All accessed on 2025-11-05.)
+
 ## Section 2.10.8
 See the file RecalculateSection2.10.8.ods for the detailed calculations.
 

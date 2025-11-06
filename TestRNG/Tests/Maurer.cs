@@ -119,8 +119,11 @@ public static class Maurer
       }
       testStatistic = sum / testBlockCount;   // f_n in Ref.A
 
+      double c = 0.7 - 0.8 / blockSize + (4.0 + 32.0 / blockSize) * Math.Pow(testBlockCount, -3.0 / blockSize);
+      double sigma = c * Math.Sqrt(variance[blockSize] / testBlockCount);
+
       // Find the p-Value
-      pValue = Normal.ComplementaryErrorFunction(Math.Abs((testStatistic - expectedValue[blockSize]) / Math.Sqrt(2 * variance[blockSize])));
+      pValue = Normal.ComplementaryErrorFunction(Math.Abs((testStatistic - expectedValue[blockSize]) / (Math.Sqrt(2) * sigma)));
 
       return pValue >= sigLevel;
    }

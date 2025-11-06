@@ -231,17 +231,28 @@ $ ./TestRNG -r 1000 maurer -bs 6 -s 0.01
 >Block Size: 2**6
 >RESULTS:
 >Acceptable proportion of passing sequences is from 0.980561 to 0.999439
->Observed proportion: 1.000000
->Result: FailTooHigh
+>Observed proportion: 0.989000
+>Result: Pass
 >
 >Checking histogram for uniformity:
->Chi-Squared: 9000.000000
->Uniformity p-Value: 0.000000
->p-Values are NOT uniformly distributed
+>Chi-Squared: 15.180000
+>Uniformity p-Value: 0.086109
+>p-Values are uniformly distributed.
 
-Other tests were run, increasing the block size parameter by one up to 12.  All of these tests failed similarly.  The following was
-run 5 times:
-```
-$ ./TestRNG maurer -bs 10 -s 0.01
-```
-In no run, was a p-Value below 0.999 observed.
+The results of each block size from 6 to 16 are summarized in this table:
+
+<table>
+<tr><th>&nbsp;</th><th colspan="2">Proportion of Sequences</th><th colspan="3">Uniform Distribution of P-Values</th></tr>
+<tr><th>Block Size</th><th>Passing Proportion</th><th>Result</th><th>Chi-Squared</th><th>P-Value</th><th>Result</th></tr>
+<tr><td>6</td><td>0.989</td><td>PASS</td><td>15.18</td><td>0.086109</td><td>PASS</td></tr>
+<tr><td>7</td><td>0.995</td><td>PASS</td><td>17.56</td><td>0.040635</td><td>PASS</td></tr>
+<tr><td>8</td><td>0.992</td><td>PASS</td><td>33.78</td><td>0.000098</td><td>FAIL</td></tr>
+<tr><td>9</td><td>0.998</td><td>PASS</td><td>46.58</td><td>0.000000</td><td>FAIL</td></tr>
+<tr><td>10</td><td>0.998</td><td>PASS</td><td>39.28</td><td>0.000010</td><td>FAIL</td></tr>
+<tr><td>11</td><td>0.998</td><td>PASS</td><td>58.70</td><td>0.000000</td><td>FAIL</td></tr>
+<tr><td>12</td><td>1.000</td><td>FAIL</td><td>85.36</td><td>0.000000</td><td>FAIL</td></tr>
+<tr><td>13</td><td>0.996</td><td>PASS</td><td>83.22</td><td>0.000000</td><td>FAIL</td></tr>
+<tr><td>14</td><td>1.000</td><td>FAIL</td><td>117.94</td><td>0.000000</td><td>FAIL</td></tr>
+<tr><td>15</td><td>1.000</td><td>FAIL</td><td>164.46</td><td>0.000000</td><td>FAIL</td></tr>
+<tr><td>16</td><td>1.000</td><td>FAIL</td><td>120.06</td><td>0.000000</td><td>FAIL</td></tr>
+</table>
