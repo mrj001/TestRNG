@@ -28,6 +28,7 @@ Next, I'm going to go back and run each of the tests numerous times, and evaluat
 | 2.7 | Non-overlapping Template | TODO | | |
 | 2.8 | Overlapping Template | 1,000 | PASS | PASS |
 | 2.9 | Maurer's "Universal Statistical" | 1,000 | FAIL | FAIL |
+| 2.10 | Linear Complexity | 1,000 | FAIL | FAIL |
 
 ## Monobit test
 ```
@@ -255,4 +256,36 @@ The results of each block size from 6 to 16 are summarized in this table:
 <tr><td>14</td><td>1.000</td><td>FAIL</td><td>117.94</td><td>0.000000</td><td>FAIL</td></tr>
 <tr><td>15</td><td>1.000</td><td>FAIL</td><td>164.46</td><td>0.000000</td><td>FAIL</td></tr>
 <tr><td>16</td><td>1.000</td><td>FAIL</td><td>120.06</td><td>0.000000</td><td>FAIL</td></tr>
+</table>
+
+## 2.10 Linear Complexity Test
+```
+$ ./TestRNG -r 1000 linear -bs 500 -bc 1000 -s 0.01
+```
+>Linear Complexity Test
+>Significance: 0.01
+>Block Size: 500
+>Block Count: 1000
+>RESULTS:
+>Acceptable proportion of passing sequences is from 0.980561 to 0.999439
+>Observed proportion: 0.993000
+>Result: Pass
+>
+>Checking histogram for uniformity:
+>Chi-Squared: 13.600000
+>Uniformity p-Value: 0.137282
+>p-Values are uniformly distributed.
+
+The results for a range of block sizes from 500 to 5000 are summarized in the following table.  The block count
+and repeat counts were both held at 1,000.
+
+<table>
+<tr><th>&nbsp;</th><th colspan="2">Proportion of Sequences</th><th colspan="3">Uniform Distribution of P-Values</th></tr>
+<tr><th>Block Size</th><th>Passing Proportion</th><th>Result</th><th>Chi-Squared</th><th>P-Value</th><th>Result</th></tr>
+<tr><td>500</td><td>0.993</td><td>PASS</td><td>13.60</td><td>0.137282</td><td>PASS</td></tr>
+<tr><td>1,000</td><td>0.993</td><td>PASS</td><td>10.34</td><td>0.323668</td><td>PASS</td></tr>
+<tr><td>2,000</td><td>0.987</td><td>PASS</td><td>4.04</td><td>0.908760</td><td>PASS</td></tr>
+<tr><td>3,000</td><td>0.988</td><td>PASS</td><td>15.20</td><td>0.085587</td><td>PASS</td></tr>
+<tr><td>4,000</td><td>0.991</td><td>PASS</td><td>5.06</td><td>0.829047</td><td>PASS</td></tr>
+<tr><td>5,000</td><td>0.993</td><td>PASS</td><td>14.12</td><td>0.118120</td><td>PASS</td></tr>
 </table>
