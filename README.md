@@ -31,6 +31,7 @@ Next, I'm going to go back and run each of the tests numerous times, and evaluat
 | 2.10 | Linear Complexity | 1,000 | FAIL | FAIL |
 | 2.11 | Serial | TODO |  |  |
 | 2.12 | Approximate Entropy | 1,000 | FAIL | FAIL |
+| 2.13 | Cumulative Sums | 1,000 | PASS | PASS |
 
 ## Monobit test
 ```
@@ -335,3 +336,39 @@ of 15 and 16, the call counts were automatically adjusted to 1,048,576 and 2,097
 <tr><td>15</td><td>0.583</td><td>FAIL</td><td>5438.00</td><td>0.000000</td><td>FAIL</td></tr>
 <tr><td>16</td><td>0.239</td><td>FAIL</td><td>8131.68</td><td>0.000000</td><td>FAIL</td></tr>
 </table>
+
+## Section 2.13 Cumulative Sums Test
+```
+$ ./TestRNG -r 1000 cusum -c 1000000 -m forward -s 0.01
+```
+>Cumulative Sums (Cusum) Test
+>Significance: 0.01
+>Call Count: 1,000,000
+>Mode: Forward
+>RESULTS:
+>Acceptable proportion of passing sequences is from 0.980561 to 0.999439
+>Observed proportion: 0.982000
+>Result: Pass
+>
+>Checking histogram for uniformity:
+>Chi-Squared: 6.260000
+>Uniformity p-Value: 0.713641
+>p-Values are uniformly distributed.
+
+```
+$ ./TestRNG -r 1000 cusum -c 1000000 -m backward -s 0.01
+```
+>Cumulative Sums (Cusum) Test
+>Significance: 0.01
+>Call Count: 1,000,000
+>Mode: Backward
+>RESULTS:
+>Acceptable proportion of passing sequences is from 0.980561 to 0.999439
+>Observed proportion: 0.990000
+>Result: Pass
+>
+>Checking histogram for uniformity:
+>Chi-Squared: 7.300000
+>Uniformity p-Value: 0.605916
+>p-Values are uniformly distributed.
+
