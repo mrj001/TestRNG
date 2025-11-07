@@ -15,9 +15,6 @@
 // TestRNGSln. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Reflection;
-using System.Reflection.Metadata;
-using System.Runtime.CompilerServices;
 using TestRNG.RNG;
 using TestRNG.Statistics;
 
@@ -89,6 +86,17 @@ public static class Serial
       // Compute the test Statistics
       double deltaPsi = psiSquared[0] - psiSquared[1];
       double delta2Psi = psiSquared[0] - 2 * psiSquared[1] + psiSquared[2];
+
+      // On rare occasions, delta2Psi has been observed to be slightly negative.
+      // This causes an ArgumentException in Gamma.IncompleteGammaQ.
+      if (delta2Psi < 0)
+      {
+         // Check for a case where delta2Psi is more than "slightly" negative.
+         if (-9 < Math.Log10(Math.Abs(delta2Psi)))
+            throw new ApplicationException();
+         delta2Psi = 0.0;
+      }
+
       testStatistic1 = deltaPsi;
       testStatistic2 = delta2Psi;
 
