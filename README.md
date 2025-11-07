@@ -29,11 +29,16 @@ Next, I'm going to go back and run each of the tests numerous times, and evaluat
 | 2.8 | Overlapping Template | 1,000 | PASS | PASS |
 | 2.9 | Maurer's "Universal Statistical" | 1,000 | FAIL | FAIL |
 | 2.10 | Linear Complexity | 1,000 | FAIL | FAIL |
-| 2.11 | Serial | 1,000 | PASS* | PASS |
+| 2.11 | Serial | 1,000 | PASS\* | PASS |
 | 2.12 | Approximate Entropy | 1,000 | FAIL | FAIL |
 | 2.13 | Cumulative Sums | 1,000 | PASS | PASS |
+| 2.14 | Random Excursions | 1,000 | FAIL\*\* | FAIL\*\* |
 
-* A few failures were observed, but not enough to fail overall.
+\* A few failures were observed, but not enough to fail overall.
+\*\* Overall too few sequences achieved the minimum required number of cycles.  Accordingly, 
+the randomness hypothesis had to be rejected.  It is only when excluding these sequences
+with insufficient cycles do we find all the states passing the Proportion of passing
+and uniformity of p-Value tests.
 
 ## Monobit test
 ```
@@ -428,3 +433,32 @@ $ ./TestRNG -r 1000 cusum -c 1000000 -m backward -s 0.01
 >Uniformity p-Value: 0.605916
 >p-Values are uniformly distributed.
 
+## Section 2.14 Random Excursions Test
+```
+./TestRNG -r 1000 excursions -c 1000000 -s 0.01
+```
+>Random Excursions Test
+>Significance: 0.01
+>Call Count: 1,000,000
+>RESULTS:
+>Acceptable proportion of passing sequences is from 0.980561 to 0.999439
+>Observed proportion: 0.602000
+>Result: FailTooLow
+>
+>There were 618 test runs with enough cycles.
+>For each state:
+>Minimum acceptable success proportion: 0.978
+>Maximum acceptable success proportion: 1.002
+>|State | Proportion | Pass/Fail | Chi-Square |  P-Value | Pass/Fail|
+>|------|------------|-----------|------------|----------|----------|
+>|   -4 |      0.992 |      PASS |       3.75 | 0.927228 |      PASS|
+>|   -3 |      0.992 |      PASS |       4.56 | 0.871121 |      PASS|
+>|   -2 |      0.994 |      PASS |      18.25 | 0.032425 |      PASS|
+>|   -1 |      0.994 |      PASS |       7.60 | 0.575037 |      PASS|
+>|    1 |      0.995 |      PASS |       9.41 | 0.400232 |      PASS|
+>|    2 |      0.994 |      PASS |       4.65 | 0.863390 |      PASS|
+>|    3 |      0.995 |      PASS |       9.02 | 0.435186 |      PASS|
+>|    4 |      0.998 |      PASS |      11.97 | 0.215140 |      PASS|
+
+Note that overall, this test is a failure because it is only when excluding the
+sequences with too few cycles that we find the remaining sequences passing.

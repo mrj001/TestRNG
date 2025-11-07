@@ -27,6 +27,13 @@ public static class RandomExcursions
 {
    public const int DEFAULT_CALL_COUNT = 1_000_000;
 
+   public const int MINIMUM_STATE = -4;
+   public const int MAXIMUM_STATE = 4;
+
+   // The maximum and minimum are both inclusive, but zero is not a 
+   // valid state.
+   public const int STATE_COUNT = MAXIMUM_STATE - MINIMUM_STATE;
+
    public static bool Test(IRandom random, int callCount, double sigLevel,
             [NotNullWhen(true)] out double[]? testStatistics, [NotNullWhen(true)] out double[]? pValues,
             out double pValue)
@@ -143,4 +150,18 @@ public static class RandomExcursions
 
       return pValue >= sigLevel;
    }
+
+   /// <summary>
+   /// Given an index into one of the arrays of P-Values or Test Statistics, outputs the State number.
+   /// </summary>
+   /// <param name="stateIndex"></param>
+   /// <returns></returns>
+   public static int IndexToState(int stateIndex)
+   {
+      int rv = stateIndex + MINIMUM_STATE;
+      if (rv >= 0)
+         rv += 1;
+      return rv;
+   }
+
 }
