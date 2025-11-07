@@ -340,26 +340,81 @@ public class Program
 
       int callCountBefore = clArgs.CallCount;
       int callCountAfter = callCountBefore;
-      Dictionary<int, CombinedPValues> result = NonOverlapping.Test(random, ref callCountAfter, clArgs.Significance);
 
-      if (callCountBefore != callCountAfter)
-         Console.WriteLine($"Call Count was adjusted to {callCountAfter:N0}");
-      string[,] table = new string[result.Count + 1, 3];
-      table[0, 0] = "Length";
-      table[0, 1] = "Fischer";
-      table[0, 2] = "P-Value";
-      int rw = 0;
-      bool fischerPass = true;
-      foreach (int len in result.Keys.OrderBy(x => x))
+      if (clArgs.RepeatCount == 1)
       {
-         rw++;
-         table[rw, 0] = len.ToString();
-         table[rw, 1] = (result[len].FischerPValue >= clArgs.Significance) ? "ACCEPTED" : "REJECT";
-         table[rw, 2] = result[len].FischerPValue.ToString("0.000000");
-         fischerPass &= result[len].FischerPValue >= clArgs.Significance;
+         Dictionary<int, CombinedPValues> result = NonOverlapping.Test(random, ref callCountAfter, clArgs.Significance);
+
+         if (callCountBefore != callCountAfter)
+            Console.WriteLine($"Call Count was adjusted to {callCountAfter:N0}");
+         string[,] table = new string[result.Count + 1, 3];
+         table[0, 0] = "Length";
+         table[0, 1] = "Fischer";
+         table[0, 2] = "P-Value";
+         int rw = 0;
+         bool fischerPass = true;
+         foreach (int len in result.Keys.OrderBy(x => x))
+         {
+            rw++;
+            table[rw, 0] = len.ToString();
+            table[rw, 1] = (result[len].FischerPValue >= clArgs.Significance) ? "ACCEPTED" : "REJECT";
+            table[rw, 2] = result[len].FischerPValue.ToString("0.000000");
+            fischerPass &= result[len].FischerPValue >= clArgs.Significance;
+         }
+         UtilityMethods.PrintTable(table);
+         Console.WriteLine("Overall, the Null Hypothesis is {0}.", fischerPass ? "ACCEPTED" : "REJECTED");
       }
-      UtilityMethods.PrintTable(table);
-      Console.WriteLine("Overall, the Null Hypothesis is {0}.", fischerPass ? "ACCEPTED" : "REJECTED");
+      else
+      {
+         int maxTemplateLength = 10;
+         int minTemplateLength = 9;
+         double[][] pValues = new double[maxTemplateLength + 1][];
+         bool[][] results = new bool[maxTemplateLength + 1][];
+         for (int j = minTemplateLength; j <= maxTemplateLength; j ++)
+         {
+            pValues[j] = new double[clArgs.RepeatCount];
+            results[j] = new bool[clArgs.RepeatCount];
+         }
+
+         // Run the tests Repeat Count times.
+         for (int j = 0; j < clArgs.RepeatCount; j++)
+         {
+            for (int k = minTemplateLength; k <= maxTemplateLength; k++)
+            {
+               Dictionary<int, CombinedPValues> result = NonOverlapping.Test(random, ref callCountAfter, clArgs.Significance);
+               pValues[k][j] = result[k].FischerPValue;
+               results[k][j] = result[k].FischerPass;
+            }
+         }
+
+         // Output combined results
+         // Note we add 2 to the difference in the maximum and minimum template lengths -
+         //  1 because the limits are both inclusive and 1 for the header row.
+         string[,] table = new string[2 + maxTemplateLength - minTemplateLength, 6];
+         table[0, 0] = "Template Length";
+         table[0, 1] = "Pass proportion";
+         table[0, 2] = "Result";
+         table[0, 3] = "Uniformity Chi-Squared";
+         table[0, 4] = "p-Value";
+         table[0, 5] = "Result";
+         int rw = 1;
+         for (int j = minTemplateLength; j <= maxTemplateLength; j++, rw++)
+         {
+            table[rw, 0] = j.ToString();
+            double passProportion, minAcceptable, maxAcceptable;
+            Combining.PassingProportionResult r = Combining.PassingProportion(results[j], clArgs.Significance, out minAcceptable, out maxAcceptable, out passProportion);
+
+            table[rw, 1] = passProportion.ToString("0.000");
+            table[rw, 2] = passProportion >= minAcceptable && passProportion <= maxAcceptable ? "PASS" : "FAIL";
+
+            double chiSquared, pValue;
+            bool uniform = Combining.HistogramUniformity(pValues[j], clArgs.Significance, out chiSquared, out pValue);
+            table[rw, 3] = chiSquared.ToString("0.000");
+            table[rw, 4] = pValue.ToString("0.000000");
+            table[rw, 5] = uniform ? "PASS" : "FAIL";
+         }
+         UtilityMethods.PrintTable(table);
+      }
    }
 
    private static void DoOverlappingTest(IRandom random, CommandLineArgs clArgs)

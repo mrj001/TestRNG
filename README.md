@@ -25,7 +25,7 @@ Next, I'm going to go back and run each of the tests numerous times, and evaluat
 | 2.4 | Longest Run Of Ones | 1,000 | PASS | PASS |
 | 2.5 | Binary Matrix Rank | 1,000 | PASS | PASS |
 | 2.6 | Spectral | 1,000 | PASS | FAIL |
-| 2.7 | Non-overlapping Template | TODO | | |
+| 2.7 | Non-overlapping Template | 1,000 | FAIL | FAIL |
 | 2.8 | Overlapping Template | 1,000 | PASS | PASS |
 | 2.9 | Maurer's "Universal Statistical" | 1,000 | FAIL | FAIL |
 | 2.10 | Linear Complexity | 1,000 | FAIL | FAIL |
@@ -207,8 +207,21 @@ $ ./TestRNG -r 1000 spectral -c 4096 -s 0.01
 >Uniformity p-Value: 0.005128
 >p-Values are uniformly distributed.
 
-## Non-overlapping Template Matching Test
-TODO
+## 2.7 Non-overlapping Template Matching Test
+```
+$ ./TestRNG -r 1000 nonoverlapping -s 0.01
+```
+Non-overlapping Template Matching Test
+Call Count: 8,000
+Significance: 0.01
+| Template Length | Pass proportion | Result | Uniformity Chi-Squared |  p-Value | Result
+|-----------------|-----------------|--------|------------------------|----------|-------
+|               9 |           0.943 |   FAIL |                199.260 | 0.000000 |   FAIL
+|              10 |           0.891 |   FAIL |                467.100 | 0.000000 |   FAIL
+
+It should be noted here that the code runs all the non-periodic templates of length 9 and 10,
+combining the results into an overall p-Value using Fischer's method.  This test was then run
+1,000 times to produce the above.
 
 ## Overlapping Template Matching Test
 ```
