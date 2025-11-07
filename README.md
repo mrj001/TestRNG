@@ -29,9 +29,11 @@ Next, I'm going to go back and run each of the tests numerous times, and evaluat
 | 2.8 | Overlapping Template | 1,000 | PASS | PASS |
 | 2.9 | Maurer's "Universal Statistical" | 1,000 | FAIL | FAIL |
 | 2.10 | Linear Complexity | 1,000 | FAIL | FAIL |
-| 2.11 | Serial | TODO |  |  |
+| 2.11 | Serial | 1,000 | PASS* | PASS |
 | 2.12 | Approximate Entropy | 1,000 | FAIL | FAIL |
 | 2.13 | Cumulative Sums | 1,000 | PASS | PASS |
+
+* A few failures were observed, but not enough to fail overall.
 
 ## Monobit test
 ```
@@ -307,7 +309,48 @@ and repeat counts were both held at 1,000.
 </table>
 
 ## 2.11 Serial Test
-TODO
+```
+$ ./TestRNG -r 1000 serial -bs 3 -c 1000000 -s 0.01
+```
+>Serial Test
+>Significance: 0.01
+>Block Size: 3
+>Call Count: 1,000,000
+>RESULTS:
+>Acceptable proportion of passing sequences is from 0.980561 to 0.999439
+>Observed proportion: 0.983000
+>Result: Pass
+>
+>First set of p-Values
+>Checking histogram for uniformity:
+>Chi-Squared: 7.560000
+>Uniformity p-Value: 0.579021
+>p-Values are uniformly distributed.
+>Second set of p-Values
+>Checking histogram for uniformity:
+>Chi-Squared: 21.160000
+>Uniformity p-Value: 0.011959
+>p-Values are uniformly distributed.
+
+<table>
+<tr><th>&nbsp;</th><th>Proportion of Sequences</th><th colspan="2">Uniform Distribution of P-Values</th></tr>
+<tr><th>Block Size</th><th>Result</th><th>P-Value #1</th><th>P-Value #2</th></tr>
+<tr><td>2</td><td>PASS</td><td>PASS</td><td>PASS</td></tr>
+<tr><td>3</td><td>2/3</td><td>PASS</td><td>PASS</td></tr>*
+<tr><td>4</td><td>2/3</td><td>PASS</td><td>PASS</td></tr>
+<tr><td>5</td><td>PASS</td><td>PASS</td><td>PASS</td></tr>
+<tr><td>6</td><td>PASS</td><td>PASS</td><td>PASS</td></tr>
+<tr><td>7</td><td>PASS</td><td>PASS</td><td>PASS</td></tr>
+<tr><td>8</td><td>2/3</td><td>PASS</td><td>PASS</td></tr>
+<tr><td>9</td><td>PASS</td><td>PASS</td><td>PASS</td></tr>
+<tr><td>10</td><td>PASS</td><td>PASS</td><td>PASS</td></tr>
+<tr><td>11</td><td>1/3</td><td>PASS</td><td>PASS</td></tr>
+<tr><td>12</td><td>PASS</td><td>PASS</td><td>PASS</td></tr>
+<tr><td>13</td><td>PASS</td><td>PASS</td><td>PASS</td></tr>
+<tr><td>14</td><td>1/3</td><td>PASS</td><td>PASS</td></tr>
+<tr><td>15</td><td>2/3</td><td>PASS</td><td>PASS</td></tr>
+<tr><td>16</td><td>PASS</td><td>PASS</td><td>PASS</td></tr>
+</table>
 
 ## 2.12 Approximate Entropy Test
 ```

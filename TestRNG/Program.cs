@@ -516,21 +516,46 @@ public class Program
       int callCountBefore = clArgs.CallCount;
       int callCountAfter = callCountBefore;
 
-      double testStatistic1, pValue1;
-      double testStatistic2, pValue2;
-      bool result = Serial.Test(random, ref callCountAfter, ref blockSizeAfter,
-               clArgs.Significance, out testStatistic1, out pValue1, out testStatistic2,
-               out pValue2);
+      if (clArgs.RepeatCount == 1)
+      {
+         double testStatistic1, pValue1;
+         double testStatistic2, pValue2;
+         bool result = Serial.Test(random, ref callCountAfter, ref blockSizeAfter,
+                  clArgs.Significance, out testStatistic1, out pValue1, out testStatistic2,
+                  out pValue2);
 
-      if (blockSizeAfter != blockSizeBefore)
-         Console.WriteLine($"Block Size was adjusted to {blockSizeAfter}");
-      if (callCountAfter != callCountBefore)
-         Console.WriteLine($"Call was adjusted to {callCountAfter:N0}");
-      Console.WriteLine($"Test Statistic #1: {testStatistic1}");
-      Console.WriteLine($"p-Value #1: {pValue1}");
-      Console.WriteLine($"Test Statistic #2: {testStatistic2}");
-      Console.WriteLine($"p-Value #2: {pValue2}");
-      Console.WriteLine("Null hypothesis is {0}.", result ? "ACCEPTED" : "REJECTED");
+         if (blockSizeAfter != blockSizeBefore)
+            Console.WriteLine($"Block Size was adjusted to {blockSizeAfter}");
+         if (callCountAfter != callCountBefore)
+            Console.WriteLine($"Call was adjusted to {callCountAfter:N0}");
+         Console.WriteLine($"Test Statistic #1: {testStatistic1}");
+         Console.WriteLine($"p-Value #1: {pValue1}");
+         Console.WriteLine($"Test Statistic #2: {testStatistic2}");
+         Console.WriteLine($"p-Value #2: {pValue2}");
+         Console.WriteLine("Null hypothesis is {0}.", result ? "ACCEPTED" : "REJECTED");
+      }
+      else
+      {
+         double testStatistic1, testStatistic2;
+         double[] pValues1 = new double[clArgs.RepeatCount];
+         double[] pValues2 = new double[clArgs.RepeatCount];
+         bool[] results = new bool[clArgs.RepeatCount];
+
+         for (int j = 0; j < clArgs.RepeatCount;j  ++)
+            results[j] = Serial.Test(random, ref callCountAfter, ref blockSizeAfter, clArgs.Significance,
+                     out testStatistic1, out pValues1[j], out testStatistic2, out pValues2[j]);
+
+         if (blockSizeAfter != blockSizeBefore)
+            Console.WriteLine($"Block Size was adjusted to {blockSizeAfter}");
+         if (callCountAfter != callCountBefore)
+            Console.WriteLine($"Call was adjusted to {callCountAfter:N0}");
+
+         Combining.CombinePassingResults(Console.Out, results, clArgs.Significance);
+         Console.WriteLine("First set of p-Values");
+         Combining.CheckHistogramOfPValues(Console.Out, pValues1, clArgs.Significance);
+         Console.WriteLine("Second set of p-Values");
+         Combining.CheckHistogramOfPValues(Console.Out, pValues2, clArgs.Significance);
+      }
    }
 
    private static void DoApproximateEntropyTest(IRandom random, CommandLineArgs clArgs)
