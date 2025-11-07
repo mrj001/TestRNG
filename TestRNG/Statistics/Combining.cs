@@ -134,7 +134,9 @@ public static class Combining
       int[] histogram = new int[binCount];
       for (int j = 0; j < repeatCount; j++)
       {
-         int bin = (int)Math.Floor(pValues[j] * binCount);
+         // On occasion, a pValue of exactly 1 has been observed.  Make sure it does not
+         // cause an Exception indexing the histogram.
+         int bin = pValues[j] < 1.0 ? (int)Math.Floor(pValues[j] * binCount) : binCount - 1;
          histogram[bin]++;
       }
 
