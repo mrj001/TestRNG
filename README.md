@@ -29,6 +29,8 @@ Next, I'm going to go back and run each of the tests numerous times, and evaluat
 | 2.8 | Overlapping Template | 1,000 | PASS | PASS |
 | 2.9 | Maurer's "Universal Statistical" | 1,000 | FAIL | FAIL |
 | 2.10 | Linear Complexity | 1,000 | FAIL | FAIL |
+| 2.11 | Serial | TODO |  |  |
+| 2.12 | Approximate Entropy | 1,000 | FAIL | FAIL |
 
 ## Monobit test
 ```
@@ -288,4 +290,48 @@ and repeat counts were both held at 1,000.
 <tr><td>3,000</td><td>0.988</td><td>PASS</td><td>15.20</td><td>0.085587</td><td>PASS</td></tr>
 <tr><td>4,000</td><td>0.991</td><td>PASS</td><td>5.06</td><td>0.829047</td><td>PASS</td></tr>
 <tr><td>5,000</td><td>0.993</td><td>PASS</td><td>14.12</td><td>0.118120</td><td>PASS</td></tr>
+</table>
+
+## 2.11 Serial Test
+TODO
+
+## 2.12 Approximate Entropy Test
+```
+$ ./TestRNG -r 1000 entropy -bs 2 -c 1000000 -s 0.01
+```
+>Approximate Entropy Test
+>Significance: 0.01
+>Block Size: 2
+>Call Count: 1,000,000
+>RESULTS:
+>Acceptable proportion of passing sequences is from 0.980561 to 0.999439
+>Observed proportion: 0.994000
+>Result: Pass
+>
+>Checking histogram for uniformity:
+>Chi-Squared: 15.640000
+>Uniformity p-Value: 0.074791
+>p-Values are uniformly distributed.
+
+For the following, the repeat count and call count were held at the values above.  For the block sizes
+of 15 and 16, the call counts were automatically adjusted to 1,048,576 and 2,097,152 respectively.
+
+<table>
+<tr><th>&nbsp;</th><th colspan="2">Proportion of Sequences</th><th colspan="3">Uniform Distribution of P-Values</th></tr>
+<tr><th>Block Size</th><th>Passing Proportion</th><th>Result</th><th>Chi-Squared</th><th>P-Value</th><th>Result</th></tr>
+<tr><td>2</td><td>0.994</td><td>PASS</td><td>15.64</td><td>0.074791</td><td>PASS</td></tr>
+<tr><td>3</td><td>0.992</td><td>PASS</td><td>7.72</td><td>0.562591</td><td>PASS</td></tr>
+<tr><td>4</td><td>0.987</td><td>PASS</td><td>5.34</td><td>0.803720</td><td>PASS</td></tr>
+<tr><td>5</td><td>0.989</td><td>PASS</td><td>10.24</td><td>0.331408</td><td>PASS</td></tr>
+<tr><td>6</td><td>0.991</td><td>PASS</td><td>6.60</td><td>0.678686</td><td>PASS</td></tr>
+<tr><td>7</td><td>0.991</td><td>PASS</td><td>4.02</td><td>0.910091</td><td>PASS</td></tr>
+<tr><td>8</td><td>0.993</td><td>PASS</td><td>12.04</td><td>0.211064</td><td>PASS</td></tr>
+<tr><td>9</td><td>0.986</td><td>PASS</td><td>7.44</td><td>0.591409</td><td>PASS</td></tr>
+<tr><td>10</td><td>0.986</td><td>PASS</td><td>3.48</td><td>0.942198</td><td>PASS</td></tr>
+<tr><td>11</td><td>0.990</td><td>PASS</td><td>12.04</td><td>0.211064</td><td>PASS</td></tr>
+<tr><td>12</td><td>0.982</td><td>PASS</td><td>31.72</td><td>0.000223</td><td>PASS</td></tr>
+<tr><td>13</td><td>0.980</td><td>FAIL</td><td>67.68</td><td>0.000000</td><td>FAIL</td></tr>
+<tr><td>14</td><td>0.945</td><td>FAIL</td><td>625.86</td><td>0.000000</td><td>FAIL</td></tr>
+<tr><td>15</td><td>0.583</td><td>FAIL</td><td>5438.00</td><td>0.000000</td><td>FAIL</td></tr>
+<tr><td>16</td><td>0.239</td><td>FAIL</td><td>8131.68</td><td>0.000000</td><td>FAIL</td></tr>
 </table>

@@ -488,15 +488,34 @@ public class Program
       int callCountBefore = clArgs.CallCount;
       int callCountAfter = callCountBefore;
 
-      double testStatistic, pValue;
-      bool result = ApproximateEntropy.Test(random, ref callCountAfter, clArgs.BlockSize,
-               clArgs.Significance, out testStatistic, out pValue);
+      if (clArgs.RepeatCount == 1)
+      {
+         double testStatistic, pValue;
+         bool result = ApproximateEntropy.Test(random, ref callCountAfter, clArgs.BlockSize,
+                  clArgs.Significance, out testStatistic, out pValue);
 
-      if (callCountAfter != callCountBefore)
-         Console.WriteLine($"Call was adjusted to {callCountAfter:N0}");
-      Console.WriteLine($"Test Statistic: {testStatistic}");
-      Console.WriteLine($"p-Value: {pValue}");
-      Console.WriteLine("Null hypothesis is {0}.", result ? "ACCEPTED" : "REJECTED");
+         if (callCountAfter != callCountBefore)
+            Console.WriteLine($"Call was adjusted to {callCountAfter:N0}");
+         Console.WriteLine($"Test Statistic: {testStatistic}");
+         Console.WriteLine($"p-Value: {pValue}");
+         Console.WriteLine("Null hypothesis is {0}.", result ? "ACCEPTED" : "REJECTED");
+      }
+      else
+      {
+         double[] testStatistics = new double[clArgs.RepeatCount];
+         double[] pValues = new double[clArgs.RepeatCount];
+         bool[] results = new bool[clArgs.RepeatCount];
+
+         for (int j = 0; j < clArgs.RepeatCount; j++)
+            results[j] = ApproximateEntropy.Test(random, ref callCountAfter, clArgs.BlockSize,
+                  clArgs.Significance, out testStatistics[j], out pValues[j]);
+
+         if (callCountAfter != callCountBefore)
+            Console.WriteLine($"Call was adjusted to {callCountAfter:N0}");
+
+         Combining.CombinePassingResults(Console.Out, results, clArgs.Significance);
+         Combining.CheckHistogramOfPValues(Console.Out, pValues, clArgs.Significance);
+      }
    }
 
    private static void DoCusumTest(IRandom random, CommandLineArgs clArgs)
