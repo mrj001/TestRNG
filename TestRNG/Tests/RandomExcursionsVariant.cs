@@ -15,7 +15,6 @@
 // TestRNGSln. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using TestRNG.RNG;
 using TestRNG.Statistics;
 
@@ -24,27 +23,30 @@ namespace TestRNG.Tests;
 public static class RandomExcursionsVariant
 {
    public const int DEFAULT_CALL_COUNT = 1_000_000;
-   public const int MIN_STATE = -9;
-   public const int MAX_STATE = 9;
+   public const int MINIMUM_STATE = -9;
+   public const int MAXIMUM_STATE = 9;
+
+   // The maximum and minimum are both inclusive, but zero is not a 
+   // valid state.
+   public const int STATE_COUNT = MAXIMUM_STATE - MINIMUM_STATE;
+
 
    public static bool Test(IRandom random, int callCount, double sigLevel,
-            [NotNullWhen(true)] out double[]? testStatistics, [NotNullWhen(true)] out double[]? pValues,
+            out double[] testStatistics, out double[] pValues,
             out double pValue)
    {
       // default output values
       pValue = 0.0;
-      testStatistics = null;
-      pValues = null;
 
       // Count the number of cycles and the number of times each state occurs.
       int bigJ = 0;
       int sum = 0;
-      int totalStates = MAX_STATE - MIN_STATE;
+      int totalStates = MAXIMUM_STATE - MINIMUM_STATE;
       int[] stateCounts = new int[totalStates];
       for (int j = 0; j < callCount; j++)
       {
          sum += random.NextBit() ? 1 : -1;
-         if (sum >= MIN_STATE && sum <= MAX_STATE)
+         if (sum >= MINIMUM_STATE && sum <= MAXIMUM_STATE)
          {
             if (sum == 0)
                bigJ++;
@@ -61,7 +63,7 @@ public static class RandomExcursionsVariant
          testStatistics[j] = stateCounts[j];
 
       // Compute the p-values
-      for (int x = MIN_STATE; x <= MAX_STATE; x++)
+      for (int x = MINIMUM_STATE; x <= MAXIMUM_STATE; x++)
       {
          // skip zero
          if (x == 0)
@@ -82,6 +84,19 @@ public static class RandomExcursionsVariant
 
    public static int StateToIndex(int state)
    {
-      return state < 0 ? state - MIN_STATE : state - MIN_STATE - 1;
+      return state < 0 ? state - MINIMUM_STATE : state - MINIMUM_STATE - 1;
+   }
+
+   /// <summary>
+   /// Given an index into one of the arrays of P-Values or Test Statistics, outputs the State number.
+   /// </summary>
+   /// <param name="stateIndex"></param>
+   /// <returns></returns>
+   public static int IndexToState(int stateIndex)
+   {
+      int rv = stateIndex + MINIMUM_STATE;
+      if (rv >= 0)
+         rv += 1;
+      return rv;
    }
 }

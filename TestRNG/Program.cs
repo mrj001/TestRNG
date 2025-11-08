@@ -745,37 +745,94 @@ public class Program
       Console.WriteLine($"Significance: {clArgs.Significance}");
       Console.WriteLine($"Call Count: {clArgs.CallCount:N0}");
 
-      double pValue;
-      double[]? testStatistics;
-      double[]? pValues;
-      bool result = RandomExcursionsVariant.Test(random, clArgs.CallCount, clArgs.Significance, out testStatistics, out pValues, out pValue);
-
-      Console.WriteLine($"Combined p-Value: {pValue}");
-      Console.WriteLine("Overall Null Hypothesis is {0}.", result ? "ACCEPTED" : "REJECTED");
-
-      if (testStatistics is not null)
+      if (clArgs.RepeatCount == 1)
       {
-         string[,] table = new string[19, 4];
-         table[0, 0] = "State";
-         table[0, 1] = "Counts";
-         table[0, 2] = "P-Value";
-         table[0, 3] = "Conclusion";
-         int stateIndex = 0;
-         for (int x = -9; x <= 9; x++)
+         double pValue;
+         double[] testStatistics;
+         double[] pValues;
+         bool result = RandomExcursionsVariant.Test(random, clArgs.CallCount, clArgs.Significance, out testStatistics, out pValues, out pValue);
+
+         Console.WriteLine($"Combined p-Value: {pValue}");
+         Console.WriteLine("Overall Null Hypothesis is {0}.", result ? "ACCEPTED" : "REJECTED");
+
+         if (testStatistics is not null)
          {
-            // skip zero
-            if (x == 0)
-               continue;
+            string[,] table = new string[19, 4];
+            table[0, 0] = "State";
+            table[0, 1] = "Counts";
+            table[0, 2] = "P-Value";
+            table[0, 3] = "Conclusion";
+            int stateIndex = 0;
+            for (int x = -9; x <= 9; x++)
+            {
+               // skip zero
+               if (x == 0)
+                  continue;
 
-            table[stateIndex + 1, 0] = x.ToString();
-            table[stateIndex + 1, 1] = testStatistics[stateIndex].ToString("N0");
-            table[stateIndex + 1, 2] = pValues![stateIndex].ToString("0.000000");
-            table[stateIndex + 1, 3] = pValues[stateIndex] >= clArgs.Significance ? "Random" : "Non-Random";
+               table[stateIndex + 1, 0] = x.ToString();
+               table[stateIndex + 1, 1] = testStatistics[stateIndex].ToString("N0");
+               table[stateIndex + 1, 2] = pValues![stateIndex].ToString("0.000000");
+               table[stateIndex + 1, 3] = pValues[stateIndex] >= clArgs.Significance ? "Random" : "Non-Random";
 
-            stateIndex++;
+               stateIndex++;
+            }
+
+            UtilityMethods.PrintTable(table);
+         }
+      }
+      else
+      {
+         // The first index is the number of the run.
+         // The second index identifies the State of the p-Value;
+         double[][] testStatistics = new double[clArgs.RepeatCount][];
+         double[][] pValues = new double[clArgs.RepeatCount][];
+         bool[] results = new bool[clArgs.RepeatCount];
+
+         for (int j = 0; j < clArgs.RepeatCount; j++)
+            results[j] = RandomExcursionsVariant.Test(random, clArgs.CallCount, clArgs.Significance, out testStatistics[j], out pValues[j], out _);
+
+         // For each state, check the uniformity of the pValues.
+         double[] uniformityTestStatistics = new double[RandomExcursionsVariant.STATE_COUNT];
+         double[] uniformityPValues = new double[RandomExcursionsVariant.STATE_COUNT];
+         Combining.PassingProportionResult[] passingProportionResults = new Combining.PassingProportionResult[RandomExcursionsVariant.STATE_COUNT];
+         double[] observedProportions = new double[RandomExcursionsVariant.STATE_COUNT];
+         double minAcceptable = 0.0, maxAcceptable = 0.0;
+         for (int stateIndex = 0; stateIndex < RandomExcursionsVariant.STATE_COUNT; stateIndex++)
+         {
+            double[] tmpPValues = new double[clArgs.RepeatCount];
+            bool[] tmpPass = new bool[clArgs.RepeatCount];
+            for (int j = 0; j < clArgs.RepeatCount; j++)
+            {
+               tmpPValues[j] = pValues[j][stateIndex];
+               tmpPass[j] = tmpPValues[j] >= clArgs.Significance;
+            }
+
+            Combining.HistogramUniformity(tmpPValues, clArgs.Significance, out uniformityTestStatistics[stateIndex], out uniformityPValues[stateIndex]);
+            passingProportionResults[stateIndex] = Combining.PassingProportion(tmpPass, clArgs.Significance, out minAcceptable, out maxAcceptable, out observedProportions[stateIndex]);
          }
 
+         // Output
+         Console.WriteLine("For each state:");
+         Console.WriteLine($"Minimum acceptable success proportion: {minAcceptable:0.000}");
+         Console.WriteLine($"Maximum acceptable success proportion: {maxAcceptable:0.000}");
+         string[,] table = new string[1 + RandomExcursionsVariant.STATE_COUNT, 6];
+         table[0, 0] = "State";
+         table[0, 1] = "Proportion";
+         table[0, 2] = "Pass/Fail";
+         table[0, 3] = "Chi-Square";
+         table[0, 4] = "P-Value";
+         table[0, 5] = "Pass/Fail";
+         for (int stateIndex = 0; stateIndex < RandomExcursionsVariant.STATE_COUNT; stateIndex++)
+         {
+            table[stateIndex + 1, 0] = RandomExcursionsVariant.IndexToState(stateIndex).ToString();
+            table[stateIndex + 1, 1] = observedProportions[stateIndex].ToString("0.000");
+            table[stateIndex + 1, 2] = (observedProportions[stateIndex] >= minAcceptable && observedProportions[stateIndex] <= maxAcceptable) ? "PASS" : "FAIL";
+            table[stateIndex + 1, 3] = uniformityTestStatistics[stateIndex].ToString("0.00");
+            table[stateIndex + 1, 4] = uniformityPValues[stateIndex].ToString("0.000000");
+            table[stateIndex + 1, 5] = uniformityPValues[stateIndex] >= clArgs.Significance ? "PASS" : "FAIL";
+         }
          UtilityMethods.PrintTable(table);
       }
    }
 }
+

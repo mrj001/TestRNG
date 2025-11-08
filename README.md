@@ -33,6 +33,7 @@ Next, I'm going to go back and run each of the tests numerous times, and evaluat
 | 2.12 | Approximate Entropy | 1,000 | FAIL | FAIL |
 | 2.13 | Cumulative Sums | 1,000 | PASS | PASS |
 | 2.14 | Random Excursions | 1,000 | FAIL\*\* | FAIL\*\* |
+| 2.15 | Random Excursions Variant | 1,000 | PASS | PASS |
 
 \* A few failures were observed, but not enough to fail overall.
 \*\* Overall too few sequences achieved the minimum required number of cycles.  Accordingly, 
@@ -462,3 +463,37 @@ $ ./TestRNG -r 1000 cusum -c 1000000 -m backward -s 0.01
 
 Note that overall, this test is a failure because it is only when excluding the
 sequences with too few cycles that we find the remaining sequences passing.
+
+## Section 2.15 Random Excursions Variant Test
+```
+$ time ./TestRNG -r 1000 excursionsvariant -c 1000000 -s 0.01
+```
+>Random Excursions Test\
+>Significance: 0.01\
+>Call Count: 1,000,000\
+>For each state:\
+>Minimum acceptable success proportion: 0.981\
+>Maximum acceptable success proportion: 0.999\
+>|State | Proportion | Pass/Fail | Chi-Square |  P-Value | Pass/Fail|\
+>|------+------------+-----------+------------+----------+----------|\
+>|   -9 |      0.979 |      FAIL |       8.98 | 0.439122 |      PASS|\
+>|   -8 |      0.981 |      PASS |      12.14 | 0.205531 |      PASS|\
+>|   -7 |      0.983 |      PASS |       9.94 | 0.355364 |      PASS|\
+>|   -6 |      0.985 |      PASS |      14.94 | 0.092597 |      PASS|\
+>|   -5 |      0.981 |      PASS |       7.20 | 0.616305 |      PASS|\
+>|   -4 |      0.991 |      PASS |       9.20 | 0.419021 |      PASS|\
+>|   -3 |      0.994 |      PASS |       9.04 | 0.433590 |      PASS|\
+>|   -2 |      0.991 |      PASS |       6.12 | 0.727851 |      PASS|\
+>|   -1 |      0.991 |      PASS |       9.02 | 0.435430 |      PASS|\
+>|    1 |      0.988 |      PASS |      15.14 | 0.087162 |      PASS|\
+>|    2 |      0.989 |      PASS |      18.32 | 0.031637 |      PASS|\
+>|    3 |      0.988 |      PASS |      11.82 | 0.223648 |      PASS|\
+>|    4 |      0.987 |      PASS |       5.82 | 0.757790 |      PASS|\
+>|    5 |      0.991 |      PASS |       3.50 | 0.941144 |      PASS|\
+>|    6 |      0.986 |      PASS |       6.50 | 0.689019 |      PASS|\
+>|    7 |      0.983 |      PASS |       7.26 | 0.610070 |      PASS|\
+>|    8 |      0.983 |      PASS |       7.86 | 0.548314 |      PASS|\
+>|    9 |      0.983 |      PASS |       6.26 | 0.713641 |      PASS|\
+
+With only one state failing the Proportion test, and by only 2 sequences, \
+this is judged to be a pass.\
