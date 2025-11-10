@@ -71,7 +71,27 @@ The values given in (2) for the v<sub>###</sub> values for 3-bit blocks do not a
 By inspection of the given &epsilon;', we can see that the value for v<sub>111</sub> should be 1 rather than 0.
 Note that the squared values which are summed in (3) correct this, as the last value is 1 rather than 0.
 
-In Step (5), the values given for the Upper Incomplete Gamma Function (Q(a, x), per Section 5.5.3) are 
+In Step (5), the formulae for the p-Values are missing a denominator for the second argument.  As given, they are:
+
+$$
+\begin{align}
+P-value1 = igamc(2^{m-2}, \nabla\Psi^2_m)\\
+P-value2 = igamc(2^{m-3}, \nabla^2\Psi^2_m)
+\end{align}
+$$
+
+When they should be:
+
+$$
+\begin{align}
+P-value1 = igamc\bigg(2^{m-2}, \frac{\nabla\Psi^2_m}{2}\bigg)\\
+P-value2 = igamc\bigg(2^{m-3}, \frac{\nabla^2\Psi^2_m}{2}\bigg)
+\end{align}
+$$
+
+This is confirmed in the numerical example, where they show the values divided by two.
+
+Also in Step (5), the values given for the Upper Incomplete Gamma Function (Q(a, x), per Section 5.5.3) are 
 incorrect.  In the following table, Q(a, x) was calculated with the online calculator at:
 https://www.danielsoper.com/statcalc/calculator.aspx?id=23
 
