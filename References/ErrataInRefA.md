@@ -9,8 +9,10 @@ It's also possible that some of these are, in fact, my errors.  If so, please fi
 explanation.
 
 ## The Million Bits of e
-Several of the tests use the first million bits of the binary expansion of e.  I was unable to find
-a version of this that I could download.  To be confident of its accuracy, I generated it two ways.
+Several of the tests use the first million bits of the binary expansion of e.  Initially, I was unable to find
+a version of this that I could download.
+
+As a result, I decided to generate the data myself.  To be confident of its accuracy, I generated it two ways.
 First, I used a spigot algorithm (see `TestTestRNG/Utility/GenerateTestFiles.cs`).  Secondly, I 
 did a conversion from a decimal representation found on the [NASA website](https://apod.nasa.gov/htmltest/gifcity/e.1mil).
 These two versions were the same.
@@ -18,6 +20,8 @@ These two versions were the same.
 Additionally, some tests based on the million bits of e agreed perfectly with the NIST document.
 This lends some confidence that where there are discrepancies it is either my code or the NIST
 document, rather than the million bits of e used.
+
+Later, I found a copy of the NIST reference implementation had been posted to [gitub](https://github.com/terrillmoore/NIST-Statistical-Test-Suite).  This contains a copy of the data for 1,000,000 bits of e.
 
 ## Section 2.8.8
 The values for v<sub>0</sub> and v<sub>1</sub> should be 330 and 164.  I confirmed these counts
@@ -42,7 +46,7 @@ of this value is taken when the formula does not show &sigma; inside the square 
 I used 4 references (listed below) to conclude that this was an error.  Maurer's original paper 
 shows a formula for &sigma; which is very similar to that in this section of the NIST reference.
 References 2 & 3 both use the same formula as NIST.  It is presumed to be a more accurate approximation
-arrived at after the original Maurer paper.
+arrived at after the publication of the original Maurer paper.
 
 Python implementions (#2 & #3 below) both use the formula for &sigma; in calculating the test statistic.  
 The python implemention (#4 below) uses the variance from the table directly in the formula as in this NIST section.
@@ -89,7 +93,7 @@ P-value2 = igamc\bigg(2^{m-3}, \frac{\nabla^2\Psi^2_m}{2}\bigg)
 \end{align}
 $$
 
-This is confirmed in the numerical example, where they show the values divided by two.
+This is confirmed in the numerical example, where they show the previously calculated values divided by two.
 
 Also in Step (5), the values given for the Upper Incomplete Gamma Function (Q(a, x), per Section 5.5.3) are 
 incorrect.  In the following table, Q(a, x) was calculated with the online calculator at:
@@ -108,25 +112,35 @@ The arguments to the log functions are replaced by the correct values divided by
 with the correct log arguments, you get the answer given.
 
 ### Section 2.12.4(6)
-This shows
-```
-&Chi;<sup>2</sup> = 2 * 10 * (0.693147 - 0.190954) = 0.502193
-```
-However, the calculation is incorrect as 
-```
+This shows:
+
+$$
+\begin{align}
+X^2 = 2 * 10 * (0.693147 - 0.190954) = 0.502193
+\end{align}
+$$
+
+However, the calculation is incorrect because:
+
+$$
+\begin{align}
 0.693147 - 0.190954 = 0.502193
-```
+\end{align}
+$$
 
 The full expression is equal to:
-```
-&Chi;<sup>2</sup> = 2 * 10 * (0.693147 - 0.190954) = 10.04386
-```
+
+$$
+\begin{align}
+X^2 = 2 * 10 * (0.693147 - 0.190954) = 10.04386
+\end{align}
+$$
 
 In code, I've used the value 10.043859, which was arrived at by evaluating the above expression without
 intermediate rounding to 6 decimal places.  This allowed retaining the tolerance of 10<sup>-6</sup>.
 
 ### Section 2.12.4(7)
-The incorrect value for the test statistic is shown as an argument to the igamc funcdtion.  However,
+The incorrect value for the test statistic is shown as an argument to the igamc function.  However,
 the resulting p-Value is actually the one for the corrected test statistic.
 
 ## Section 2.13.4(4)
@@ -144,7 +158,7 @@ square root of n.
 
 ## Section 2.14.4 (3) & (4)
 There is a discrepancy in the counting of the sequence positions.  In the figure, the x-axis is drawn 
-zero-based.  In the text, the indices are listed as zero-based indices.
+zero-based.  In the text, the indices are listed as unit-based indices.
 
 In the list of zeroes of S' ("positions 3, 5, and 12") - for some reason the final appended zero is listed,
 but the initial prepended zero is not  (Position 1).
@@ -157,3 +171,16 @@ https://github.com/dj-on-github/sp800_22_tests
 After reviewing the code, and finding it to be a faithful implementation of the described test, and tweaking a 
 couple probabilities (I had added a trailing 5 digit to two entries.), it produced exactly the same results as
 my implementation.
+
+<table>
+<tr><th>&nbsp;</th><th colspan="2">NIST</th><th colspan="2">My Values</th></tr>
+<tr><th>State=<i>x</i></th><th>X<sup>2</sup></th><th>P-value</th><th>X<sup>2</sup></th><th>P-value</th></tr>
+<tr><td>4</td><td>3.835698</td><td>0.573306</td><td>3.810488</td><td>0.577011</td></tr>
+<tr><td>-3</td><td>7.318707</td><td>0.197996</td><td>7.314571</td><td>0.198277</td></tr>
+<tr><td>-2</td><td>7.861927</td><td>0.164011</td><td>7.841437</td><td>0.165194</td></tr>
+<tr><td>-1</td><td>15.692617</td><td>0.007779</td><td>15.692617</td><td>0.007779</td></tr>
+<tr><td>1</td><td>2.485906</td><td>0.778616</td><td>2.430872</td><td>0.786868</td></tr>
+<tr><td>2</td><td>5.429381</td><td>0.365752</td><td>4.824346</td><td>0.437691</td></tr>
+<tr><td>3</td><td>2.404171</td><td>0.790853</td><td>2.387421</td><td>0.793346</td></tr>
+<tr><td>4</td><td>2.393928</td><td>0.792378</td><td>2.529995</td><td>0.771971</td></tr>
+</table>
