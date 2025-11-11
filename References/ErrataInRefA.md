@@ -24,18 +24,17 @@ document, rather than the million bits of e used.
 Later, I found a copy of the NIST reference implementation had been posted to [gitub](https://github.com/terrillmoore/NIST-Statistical-Test-Suite).  This contains a copy of the data for 1,000,000 bits of e.
 
 ## Section 2.8.8
-The values for v<sub>0</sub> and v<sub>1</sub> should be 330 and 164.  I confirmed these counts
-using [an independent implementation](https://github.com/dj-on-github/sp800_22_tests), 
-after tweaking the values at the top of the `overlapping_template_matching_test` method in
-file `sp800_22_overlapping_template_matching_test.py`.
+I arrived at different values for the &Chi;<sup>2</sup>(obs) and P-Values given.  I attribute this 
+difference to my use of the Hamano-Kaneko formulae referenced in Section 3.8, rather than the values
+used by NIST.
 
-Also, I was unable to reproduce the &Chi;<sup>2</sup>(obs) and P-Values given.  See the file
+See the file
 `RecalculateSection2.10.8.ods` for the detailed calculations.
 
-| Value | NIST Value | Corrected Value |
+| Value | NIST Value | Using Hamano-Kameko |
 |:------|:-----------|:----------------|
-| &Chi;<sup>2</sup>(obs) | 8.965859 | 7.999866 |
-| P-value | 0.110434 | 0.156243 |
+| &Chi;<sup>2</sup>(obs) | 8.965859 | 7.949564 |
+| P-value | 0.110434 | 0.159037 |
 
 ## Section 2.9.4(5)
 In this step, a formula is given for &sigma; as a function of the variance listed in the table.

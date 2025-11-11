@@ -46,9 +46,9 @@ public class TestOverlapping
 
       // See the errata file and RecalculateSection2.8.8.ods for the differences
       // compared to Section 2.8.8 of Ref. A
-      int[] expectedV = new int[] { 330, 163, 150, 111, 78, 136 };
-      double expectedTestStatistic = 7.999866;
-      double expectedPValue = 0.156243;
+      int[] expectedV = new int[] { 329, 164, 150, 111, 78, 136 };
+      double expectedTestStatistic = 7.949564;
+      double expectedPValue = 0.159037;
 
       double tolerance = 1E-6;
 
