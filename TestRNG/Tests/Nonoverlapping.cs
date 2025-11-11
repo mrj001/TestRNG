@@ -143,7 +143,7 @@ public static class NonOverlapping
       // determine how many times the template matches within the given block.
       int bitIndex = 0;
       int matchCount = 0;
-      while (bitIndex < bitBlock.Length - templateLength)
+      while (bitIndex < bitBlock.Length - templateLength + 1)
       {
          // Check for a match
          bool match = true;
