@@ -32,7 +32,21 @@ public class Program
       if (clArgs is null)
          return;
 
-      IRandom random = new SystemRandom();
+      IRandom random;
+
+      switch (clArgs.SelectedPRNG)
+      {
+         case RNGSelector.Seedless:
+            random = new SystemRandom();
+            break;
+
+         case RNGSelector.Seeded:
+            random = new SystemRandom(Environment.TickCount);
+            break;
+
+         default:
+            throw new ApplicationException("Unknown value for selected PRNG");
+      }
 
       switch (clArgs.SelectedTest)
       {

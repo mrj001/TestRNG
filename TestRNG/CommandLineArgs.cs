@@ -15,8 +15,6 @@
 // TestRNGSln. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.ComponentModel;
-using System.ComponentModel.Design;
 using System.IO;
 using TestRNG.Tests;
 
@@ -31,6 +29,10 @@ public class CommandLineArgs
    private const string REPEAT_COUNT_LONG = "--repeat";
    private const int DEFAULT_REPEAT_COUNT = 1;
    private readonly int _repeatCount = DEFAULT_REPEAT_COUNT;
+
+   private const string PRNG = "-rng";
+   private const RNGSelector DEFAULT_PRNG = RNGSelector.Seedless;
+   private readonly RNGSelector _selectedPRNG = DEFAULT_PRNG;
 
    private const string BIN_COUNT_SHORT = "-b";
    private const string BIN_COUNT_LONG = "--bins";
@@ -81,7 +83,7 @@ public class CommandLineArgs
 
       int argIndex = 0;
 
-      ParsePreambleArgs(args, ref argIndex, out _outputFileName, out _repeatCount);
+      ParsePreambleArgs(args, ref argIndex, out _outputFileName, out _repeatCount, out _selectedPRNG);
 
       // Parse the test name
       try
@@ -166,10 +168,11 @@ public class CommandLineArgs
       }
    }
 
-   private static void ParsePreambleArgs(string[] args, ref int argIndex, out string? outputfilename, out int repeatCount)
+   private static void ParsePreambleArgs(string[] args, ref int argIndex, out string? outputfilename, out int repeatCount, out RNGSelector selectedRNG)
    {
       repeatCount = DEFAULT_REPEAT_COUNT;
       outputfilename = null;
+      selectedRNG = DEFAULT_PRNG;
 
       // TODO: Don't impose an order upon the entry of these arguments.
 
@@ -188,6 +191,14 @@ public class CommandLineArgs
       {
          argIndex++;
          repeatCount = ParseIntegerArg(args[argIndex - 1], args, ref argIndex);
+      }
+
+      // Parse optional selected PRNG
+      if (args[argIndex] == PRNG)
+      {
+         argIndex++;
+         selectedRNG = Enum.Parse<RNGSelector>(args[argIndex], true);
+         argIndex++;
       }
    }
 
@@ -701,14 +712,13 @@ public class CommandLineArgs
       tw.WriteLine("TestRNG {-h | --help} {TestName | all}");
       tw.WriteLine("\tPrints a help message for a specific test or for all tests.");
       tw.WriteLine();
-      tw.WriteLine($"TestRNG [-o outputfilename] [{REPEAT_COUNT_SHORT} | {REPEAT_COUNT_LONG} RepeatCount] TestName {{Test-specific args}}");
-      tw.WriteLine("\t-o specifies the name of a results file to be created.");
-      tw.WriteLine("\t\tIf this file exists, it will be overwritten.");
-      tw.WriteLine("\t\tIf this option is not given, no output file is created.");
+      PrintUsageCommandLine(tw);
       tw.WriteLine();
-      tw.WriteLine($"[{REPEAT_COUNT_SHORT} | {REPEAT_COUNT_LONG} RepeatCount]");
-      tw.WriteLine($"      Specifies the number of times to repeat a test.");
-      tw.WriteLine($"      If not specified, defaults to {DEFAULT_REPEAT_COUNT}");
+      PrintUsageOutputFile(tw);
+      tw.WriteLine();
+      PrintUsageRepeat(tw);
+      tw.WriteLine();
+      PrintUsagePRNG(tw);
       tw.WriteLine();
       tw.WriteLine("TestName is one of");
 
@@ -720,14 +730,13 @@ public class CommandLineArgs
    private static void PrintUsage(TextWriter tw)
    {
       tw.WriteLine("Usage:");
-      tw.WriteLine($"TestRNG [-o outputfilename] [{REPEAT_COUNT_SHORT} | {REPEAT_COUNT_LONG} RepeatCount] TestName {{Test-specific args}}");
-      tw.WriteLine("\t-o specifies the name of a results file to be created.");
-      tw.WriteLine("\t\tIf this file exists, it will be overwritten.");
-      tw.WriteLine("\t\tIf this option is not given, no output file is created.");
+      PrintUsageCommandLine(tw);
       tw.WriteLine();
-      tw.WriteLine($"[{REPEAT_COUNT_SHORT} | {REPEAT_COUNT_LONG} RepeatCount]");
-      tw.WriteLine($"      Specifies the number of times to repeat a test.");
-      tw.WriteLine($"      If not specified, defaults to {DEFAULT_REPEAT_COUNT}");
+      PrintUsageOutputFile(tw);
+      tw.WriteLine();
+      PrintUsageRepeat(tw);
+      tw.WriteLine();
+      PrintUsagePRNG(tw);
       tw.WriteLine();
 
       foreach (TestSelector ts in Enum.GetValues<TestSelector>())
@@ -737,17 +746,45 @@ public class CommandLineArgs
    private static void PrintUsage(TextWriter tw, TestSelector test)
    {
       tw.WriteLine("Usage:");
-      tw.WriteLine($"TestRNG [-o outputfilename] [{REPEAT_COUNT_SHORT} | {REPEAT_COUNT_LONG} RepeatCount] TestName {{Test-specific args}}");
-      tw.WriteLine("\t-o specifies the name of a results file to be created.");
-      tw.WriteLine("\t\tIf this file exists, it will be overwritten.");
-      tw.WriteLine("\t\tIf this option is not given, no output file is created.");
+      PrintUsageCommandLine(tw);
       tw.WriteLine();
-      tw.WriteLine($"[{REPEAT_COUNT_SHORT} | {REPEAT_COUNT_LONG} RepeatCount]");
-      tw.WriteLine($"      Specifies the number of times to repeat a test.");
-      tw.WriteLine($"      If not specified, defaults to {DEFAULT_REPEAT_COUNT}");
+      PrintUsageOutputFile(tw);
+      tw.WriteLine();
+      PrintUsageRepeat(tw);
+      tw.WriteLine();
+      PrintUsagePRNG(tw);
       tw.WriteLine();
 
       PrintSpecificTestHelp(tw, test);
+   }
+
+   private static void PrintUsageCommandLine(TextWriter tw)
+   {
+      tw.WriteLine($"TestRNG [-o outputfilename] [{REPEAT_COUNT_SHORT} | {REPEAT_COUNT_LONG} RepeatCount] [{PRNG} PRNG] TestName {{Test-specific args}}");
+   }
+
+   private static void PrintUsageOutputFile(TextWriter tw)
+   {
+      tw.WriteLine("\t-o specifies the name of a results file to be created.");
+      tw.WriteLine("\t\tIf this file exists, it will be overwritten.");
+      tw.WriteLine("\t\tIf this option is not given, no output file is created.");
+      tw.WriteLine("\t\tNOTE: only used for the uniform test!");
+   }
+
+   private static void PrintUsageRepeat(TextWriter tw)
+   {
+      tw.WriteLine($"[{REPEAT_COUNT_SHORT} | {REPEAT_COUNT_LONG} RepeatCount]");
+      tw.WriteLine($"      Specifies the number of times to repeat a test.");
+      tw.WriteLine($"      If not specified, defaults to {DEFAULT_REPEAT_COUNT}");
+   }
+
+   private static void PrintUsagePRNG(TextWriter tw)
+   {
+      tw.WriteLine($"[{PRNG} PRNG]");
+      tw.WriteLine("\tSpecifies the Pseudo-Random Number Generator to use.");
+      tw.WriteLine("\tPRNG is one of:");
+      foreach (RNGSelector ts in Enum.GetValues<RNGSelector>())
+         tw.WriteLine($"\t\t{ts.ToString().ToLower()}");
    }
 
    private static void PrintSpecificTestHelp(TextWriter tw, TestSelector test)
@@ -1060,6 +1097,8 @@ public class CommandLineArgs
    #endregion
 
    public TestSelector SelectedTest { get => _selectedTest; }
+
+   public RNGSelector SelectedPRNG { get => _selectedPRNG; }
 
    public string? OutputFileName { get => _outputFileName; }
 
