@@ -26,7 +26,7 @@ The following table is the result of many runs of each test, and evaluating the 
 
 <table>
 <tr><th colspan="2">&nbsp;</th><th colspan="2">Seeded System.Random</th><th colspan="2">Seedless System.Random</th></tr>
-<tr><th>NIST</th>Test<th>Proportion of Passing</th><th>Uniformity of P-Values</th><th>Proportion of Passing</th><th>Uniformity of P-Values</th></tr>
+<tr><th>NIST</th><th>Test</th><th>Proportion of Passing</th><th>Uniformity of P-Values</th><th>Proportion of Passing</th><th>Uniformity of P-Values</th></tr>
 <tr><td>2.1 </td><td>Monobit</td><td>PASS</td><td>PASS</td><td>PASS</td><td>PASS</td></tr>
 <tr><td>2.2 </td><td>Frequency Block</td><td>PASS</td><td>PASS</td><td>PASS</td><td>PASS</td></tr>
 <tr><td>2.3 </td><td>Runs</td><td>PASS</td><td>PASS</td><td>PASS</td><td>PASS</td></tr>
