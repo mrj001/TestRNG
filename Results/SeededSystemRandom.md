@@ -26,7 +26,7 @@ The following table is the result of many runs of each test, and evaluating the 
 
 <table>
 <tr><th colspan="2">&nbsp;</th><th colspan="2">Seeded System.Random</th><th colspan="2">Seedless System.Random</th></tr>
-<tr><th>NIST</th><Test><th>Proportion of Passing</th><th>Uniformity of P-Values</th><th>Proportion of Passing</th><th>Uniformity of P-Values</th></tr>
+<tr><th>NIST</th>Test<th>Proportion of Passing</th><th>Uniformity of P-Values</th><th>Proportion of Passing</th><th>Uniformity of P-Values</th></tr>
 <tr><td>2.1 </td><td>Monobit</td><td>PASS</td><td>PASS</td><td>PASS</td><td>PASS</td></tr>
 <tr><td>2.2 </td><td>Frequency Block</td><td>PASS</td><td>PASS</td><td>PASS</td><td>PASS</td></tr>
 <tr><td>2.3 </td><td>Runs</td><td>PASS</td><td>PASS</td><td>PASS</td><td>PASS</td></tr>
@@ -37,14 +37,12 @@ The following table is the result of many runs of each test, and evaluating the 
 <tr><td>2.8 </td><td>Overlapping Template Matching</td><td>PASS</td><td>PASS</td><td>PASS</td><td>PASS</td></tr>
 <tr><td>2.9 </td><td>Maurer's "Universal Statistical"</td><td>FAIL</td><td>FAIL</td><td>FAIL</td><td>FAIL</td></tr>
 <tr><td>2.10</td><td>Linear Complexity</td><td>PASS</td><td>PASS</td><td>PASS</td><td>PASS</td></tr>
-<tr><td>2.11</td><td>Serial</td><td>FAIL</td><td>PASS</td><td>PASS\*</td><td>PASS</td></tr>
+<tr><td>2.11</td><td>Serial</td><td>FAIL</td><td>PASS</td><td>FAIL</td><td>PASS</td></tr>
 <tr><td>2.12</td><td>Approximate Entropy</td><td>FAIL</td><td>FAIL</td><td>FAIL</td><td>FAIL</td></tr>
 <tr><td>2.13</td><td>Cumulative Sums</td><td>PASS</td><td>PASS</td><td>PASS</td><td>PASS</td></tr>
 <tr><td>2.14</td><td>Random Excursions</td><td>FAIL</td><td>FAIL</td><td>FAIL</td><td>FAIL</td></tr>
 <tr><td>2.15</td><td>Random Excursions Variant</td><td>PASS</td><td>PASS</td><td>PASS</td><td>PASS</td></tr>
 </table>
-
-\* A few failures were observed, but not enough to fail overall.
 
 # Detailed Results
 ## 2.1 Monobit Test
