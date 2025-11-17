@@ -18,14 +18,13 @@ The following table is the result of many runs of each test, and evaluating the 
 | 2.7 | Non-overlapping Template | 1,000 | FAIL | FAIL |
 | 2.8 | Overlapping Template | 1,000 | PASS | PASS |
 | 2.9 | Maurer's "Universal Statistical" | 1,000 | FAIL | FAIL |
-| 2.10 | Linear Complexity | 1,000 | FAIL | FAIL |
-| 2.11 | Serial | 1,000 | PASS\* | PASS |
+| 2.10 | Linear Complexity | 1,000 | PASS | PASS |
+| 2.11 | Serial | 1,000 | FAIL | PASS |
 | 2.12 | Approximate Entropy | 1,000 | FAIL | FAIL |
 | 2.13 | Cumulative Sums | 1,000 | PASS | PASS |
 | 2.14 | Random Excursions | 1,000 | FAIL\*\* | FAIL\*\* |
 | 2.15 | Random Excursions Variant | 1,000 | PASS | PASS |
 
-\* A few failures were observed, but not enough to fail overall.\
 \*\* Overall too few sequences achieved the minimum required number of cycles.  Accordingly, 
 the randomness hypothesis had to be rejected.  It is only when excluding these sequences
 with insufficient cycles do we find all the states passing the Proportion of passing
@@ -329,25 +328,33 @@ $ ./TestRNG -r 1000 serial -bs 3 -c 1000000 -s 0.01
 >Uniformity p-Value: 0.011959\
 >p-Values are uniformly distributed.
 
+The following table summarizes results for block sizes 2 through 16.  For each block size,
+the tests were run 3 times.  The numbers in
+parentheses indicate the number of times each test passed.  Two out of 3 is deemed a pass for that
+test; less than 2 is deemed a failure.
+
 <table>
 <tr><th>&nbsp;</th><th>Proportion of Sequences</th><th colspan="2">Uniform Distribution of P-Values</th></tr>
 <tr><th>Block Size</th><th>Result</th><th>P-Value #1</th><th>P-Value #2</th></tr>
-<tr><td>2</td><td>PASS</td><td>PASS</td><td>PASS</td></tr>
-<tr><td>3</td><td>2/3</td><td>PASS</td><td>PASS</td></tr>*
-<tr><td>4</td><td>2/3</td><td>PASS</td><td>PASS</td></tr>
-<tr><td>5</td><td>PASS</td><td>PASS</td><td>PASS</td></tr>
-<tr><td>6</td><td>PASS</td><td>PASS</td><td>PASS</td></tr>
-<tr><td>7</td><td>PASS</td><td>PASS</td><td>PASS</td></tr>
-<tr><td>8</td><td>2/3</td><td>PASS</td><td>PASS</td></tr>
-<tr><td>9</td><td>PASS</td><td>PASS</td><td>PASS</td></tr>
-<tr><td>10</td><td>PASS</td><td>PASS</td><td>PASS</td></tr>
-<tr><td>11</td><td>1/3</td><td>PASS</td><td>PASS</td></tr>
-<tr><td>12</td><td>PASS</td><td>PASS</td><td>PASS</td></tr>
-<tr><td>13</td><td>PASS</td><td>PASS</td><td>PASS</td></tr>
-<tr><td>14</td><td>1/3</td><td>PASS</td><td>PASS</td></tr>
-<tr><td>15</td><td>2/3</td><td>PASS</td><td>PASS</td></tr>
-<tr><td>16</td><td>PASS</td><td>PASS</td><td>PASS</td></tr>
+<tr><td>2</td><td>PASS (2/3)</td><td>PASS (3/3)</td><td>PASS (3/3)</td></tr>
+<tr><td>3</td><td>PASS (2/3)</td><td>PASS (3/3)</td><td>PASS (3/3)</td></tr>
+<tr><td>4</td><td>PASS (2/3)</td><td>PASS (3/3)</td><td>PASS (3/3)</td></tr>
+<tr><td>5</td><td>FAIL (1/3)</td><td>PASS (3/3)</td><td>PASS (3/3)</td></tr>
+<tr><td>6</td><td>PASS (2/3)</td><td>PASS (3/3)</td><td>PASS (3/3)</td></tr>
+<tr><td>7</td><td>PASS (3/3)</td><td>PASS (3/3)</td><td>PASS (3/3)</td></tr>
+<tr><td>8</td><td>PASS (3/3)</td><td>PASS (3/3)</td><td>PASS (3/3)</td></tr>
+<tr><td>9</td><td>PASS (3/3)</td><td>PASS (3/3)</td><td>PASS (3/3)</td></tr>
+<tr><td>10</td><td>PASS (2/3)</td><td>PASS (3/3)</td><td>PASS (3/3)</td></tr>
+<tr><td>11</td><td>PASS (3/3)</td><td>PASS (3/3)</td><td>PASS (3/3)</td></tr>
+<tr><td>12</td><td>PASS (3/3)</td><td>PASS (3/3)</td><td>PASS (3/3)</td></tr>
+<tr><td>13</td><td>FAIL (1/3)</td><td>PASS (3/3)</td><td>PASS (3/3)</td></tr>
+<tr><td>14</td><td>PASS (2/3)</td><td>PASS (3/3)</td><td>PASS (3/3)</td></tr>
+<tr><td>15</td><td>PASS (2/3)</td><td>PASS (3/3)</td><td>PASS (3/3)</td></tr>
+<tr><td>16</td><td>PASS (3/3)</td><td>PASS (3/3)</td><td>PASS (3/3)</td></tr>
 </table>
+
+Overall, the Proportion of Sequences test is deemed as a failure.  Two out of 15 block sizes only achieved
+1 of 3 trials successful, and were deemed failures
 
 ## 2.12 Approximate Entropy Test
 ```
